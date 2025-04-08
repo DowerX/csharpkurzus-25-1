@@ -4,7 +4,7 @@
 
 ### CRUD műveletek
 
-- [ ] Felhasználók kezelése
+- [x] Felhasználók kezelése
   - felhasználónév
   - jelszó
   - admin-e?

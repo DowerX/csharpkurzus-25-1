@@ -3,12 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace IH1RZJ;
 
-public enum Opertaion
-{
-  Load,
-  Print
-}
-
 public class Config
 {
   private static Config? instance;
@@ -26,7 +20,6 @@ public class Config
     }
   }
 
-  public Opertaion Operation { get; set; } = Opertaion.Print;
   public string UserPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "users.json");
 
   public JsonSerializerOptions JsonOptions = new()
