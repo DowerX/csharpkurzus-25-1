@@ -1,5 +1,8 @@
 namespace IH1RZJ.View.ConsoleUI.Screen;
 
+using IH1RZJ.Controller;
+using IH1RZJ.DAO;
+
 using Context = Dictionary<string, object>;
 
 public class RegisterScreen : TableScreen<string>
@@ -28,9 +31,18 @@ public class RegisterScreen : TableScreen<string>
         Console.Write(text + ": ");
         c[text] = Console.ReadLine();
       }
-      else
+      else if (c.ContainsKey("Username") && c.ContainsKey("Password") && c.ContainsKey("Repeat password"))
       {
-        // TODO: Register
+        if (new UserController(DAOFactory.Instance.UserDAO).Register((string)c["Username"], (string)c["Password"], (string)c["Repeat password"]))
+        {
+          Console.WriteLine("Succesful register! Press ENTER...");
+          Console.ReadLine();
+        }
+        else
+        {
+          Console.WriteLine("Failed register! Press ENTER...");
+          Console.ReadLine();
+        }
       }
     },
     ref context)

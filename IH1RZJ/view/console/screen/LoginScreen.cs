@@ -1,5 +1,8 @@
 namespace IH1RZJ.View.ConsoleUI.Screen;
 
+using IH1RZJ.Controller;
+using IH1RZJ.DAO;
+
 using Context = Dictionary<string, object>;
 
 public class LoginScreen : TableScreen<string>
@@ -27,9 +30,17 @@ public class LoginScreen : TableScreen<string>
         Console.Write(text + ": ");
         c[text] = Console.ReadLine();
       }
-      else
+      else if (c.ContainsKey("Username") && c.ContainsKey("Password"))
       {
-        // TODO: Login
+        if (new UserController(DAOFactory.Instance.UserDAO).Login((string)c["Username"], (string)c["Password"]))
+        {
+          new MainScreen(ref c).Show();
+        }
+        else
+        {
+          Console.WriteLine("Failed login! Press ENTER...");
+          Console.ReadLine();
+        }
       }
     },
     ref context)

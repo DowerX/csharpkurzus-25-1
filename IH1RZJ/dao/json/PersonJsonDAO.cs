@@ -1,3 +1,4 @@
+
 using System.Text.Json;
 
 using IH1RZJ.Model;
@@ -6,23 +7,23 @@ using IH1RZJ.Model.DTO;
 
 namespace IH1RZJ.DAO.Json;
 
-public class UserJsonDAO : IUserDAO, IDisposable
+public class PersonJsonDAO : IPersonDAO, IDisposable
 {
-  private List<User> users;
+  private List<Person> people;
   private string path;
 
-  public UserJsonDAO(string path)
+  public PersonJsonDAO(string path)
   {
     this.path = path;
     using FileStream stream = File.OpenRead(path);
-    List<UserJsonDTO>? userDTOs = JsonSerializer.Deserialize<List<UserJsonDTO>>(stream, Config.Instance.JsonOptions);
+    List<PersonJsonDTO>? peopleDTOs = JsonSerializer.Deserialize<List<PersonJsonDTO>>(stream, Config.Instance.JsonOptions);
 
-    if (userDTOs == null)
+    if (peopleDTOs == null)
     {
       throw new Exception("Failed to load users!");
     }
 
-    users = userDTOs
+    people = peopleDTOs
       .AsParallel()
       .Select(dto => dto.ToDomain())
       .ToList();
@@ -37,9 +38,9 @@ public class UserJsonDAO : IUserDAO, IDisposable
 
       stream.Write(System.Text.Encoding.UTF8.GetBytes(
         JsonSerializer.Serialize(
-          users
+          people
             .AsParallel()
-            .Select(user => user.ToDTO())
+            .Select(person => person.ToDTO())
             .ToList(),
           Config.Instance.JsonOptions
       )));
@@ -58,32 +59,31 @@ public class UserJsonDAO : IUserDAO, IDisposable
     Save();
   }
 
-  public void Create(User user)
+  public void Create(Person person)
   {
-    users.Add(user);
+    people.Add(person);
     Save();
   }
 
-  public void Delete(User user)
+  public void Delete(Person person)
   {
-    users.Remove(user);
+    people.Remove(person);
     Save();
   }
 
-  public IEnumerable<User> List(Guid? id, string? username, bool? isAdmin)
+  public IEnumerable<Person> List(Guid? id, string? name)
   {
-    return users
+    return people
       .AsParallel()
-      .Where(user => id == null || user.ID == id)
-      .Where(user => username == null || user.Username == username)
-      .Where(user => isAdmin == null || user.IsAdmin == isAdmin)
+      .Where(person => id == null || person.ID == id)
+      .Where(person => name == null || person.Name == name)
       .ToList();
   }
 
-  public void Update(User user)
+  public void Update(Person person)
   {
-    int index = users.FindIndex(u => user.ID == u.ID);
-    users[index] = user;
+    int index = people.FindIndex(p => person.ID == p.ID);
+    people[index] = person;
     Save();
   }
 }
