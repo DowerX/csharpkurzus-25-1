@@ -37,6 +37,13 @@ public static class Mapper
     MovieID = review.MovieID,
     Score = review.Score
   };
+  public static UserJsonDTO ToDTO(this User user) => new UserJsonDTO
+  {
+    ID = user.ID,
+    Username = user.Username,
+    PasswordHash = user.PasswordHash,
+    IsAdmin = user.IsAdmin
+  };
   #endregion
 
   #region ToDomain
@@ -71,6 +78,14 @@ public static class Mapper
     UserID = review.UserID,
     MovieID = review.MovieID,
     Score = review.Score
+  };
+
+  public static User ToDomain(this UserJsonDTO user) => new User
+  {
+    ID = user.ID,
+    Username = user.Username,
+    PasswordHash = user.PasswordHash,
+    IsAdmin = user.IsAdmin
   };
   #endregion
 }

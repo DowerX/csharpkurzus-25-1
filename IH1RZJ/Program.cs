@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using IH1RZJ.Controller;
+using IH1RZJ.DAO.Json;
 using IH1RZJ.Model;
 using IH1RZJ.Model.DTO.Json;
 
@@ -13,21 +15,25 @@ internal class Program
     private static int Main(string[] args)
     {
         // load config
-        Config config = new();
         {
             var configRoot = new ConfigurationBuilder()
                 .AddEnvironmentVariables(prefix: "MOVIE_")
                 .AddCommandLine(args)
                 .Build();
-            configRoot.Bind(config);
+            configRoot.Bind(Config.Instance);
         }
 
-        switch (config.Operation)
+        // create daos
+        using var userDao = new UserJsonDAO(Config.Instance.UserPath);
+
+        // create controllers
+        UserController userController = new UserController(userDao);
+
+        // interface
+        switch (Config.Instance.Operation)
         {
             case Opertaion.Print:
                 return Print();
-            case Opertaion.Load:
-                return Load(config.Path);
         }
 
         return 0;
@@ -63,7 +69,8 @@ internal class Program
                 WriteIndented = true
             };
             UserJsonDTO? user = JsonSerializer.Deserialize<UserJsonDTO>(stream, options);
-            if (user == null) {
+            if (user == null)
+            {
                 Console.Error.WriteLine("Failed to deserialize!");
                 return -1;
             }
