@@ -35,6 +35,14 @@ public class ConsoleUI
 
   public void Show()
   {
-    rootScreen.Show();
+    try
+    {
+      rootScreen.Show();
+
+    }
+    catch (Exception e)
+    {
+      Console.Error.WriteLine(e.Message);
+    }
   }
 }
