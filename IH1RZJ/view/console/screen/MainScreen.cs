@@ -6,7 +6,7 @@ public class MainScreen : TableScreen<string>
 {
   public MainScreen(ref Context context) :
   base(
-    new() { "People" },
+    new() { "People", "Movies" },
     (string text, ref Context c) => text,
     (string text, ref Context c) =>
     {
@@ -14,6 +14,9 @@ public class MainScreen : TableScreen<string>
       {
         case "People":
           new PersonScreen(ref c).Show();
+          break;
+        case "Movies":
+          new MovieMainScreen(ref c).Show();
           break;
       }
     },
