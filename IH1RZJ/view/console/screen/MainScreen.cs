@@ -1,25 +1,17 @@
 namespace IH1RZJ.View.ConsoleUI.Screen;
 
+using IH1RZJ.View.ConsoleUI.Screen.Table;
+
 using Context = Dictionary<string, object>;
 
-public class MainScreen : TableScreen<string>
+public class MainScreen : TableScreen
 {
   public MainScreen(ref Context context) :
   base(
-    new() { "People", "Movies" },
-    (string text, ref Context c) => text,
-    (string text, ref Context c) =>
-    {
-      switch (text)
-      {
-        case "People":
-          new PersonScreen(ref c).Show();
-          break;
-        case "Movies":
-          new MovieMainScreen(ref c).Show();
-          break;
-      }
-    },
+    new() {
+      new StringRow("People", (ref Context context)=> new PersonScreen(ref context).Show()),
+      new StringRow("Movies", (ref Context context)=> new MovieMainScreen(ref context).Show()),
+     },
     ref context)
   { }
 }

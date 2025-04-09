@@ -1,35 +1,19 @@
 namespace IH1RZJ.View.ConsoleUI.Screen;
 
+using IH1RZJ.View.ConsoleUI.Screen.Table;
+
 using Context = Dictionary<string, object>;
 
-public class MovieMainScreen : TableScreen<string>
+public class MovieMainScreen : TableScreen
 {
   public MovieMainScreen(ref Context context) :
   base(
-    new() { "List", "Search", "Ordering" },
-    (string text, ref Context c) =>
-    {
-      if (text == "Ordering")
-      {
-        return $"{text}: {(Ordering)c["Ordering"]}";
-      }
-      else
-      {
-        return text;
-      }
-    },
-    (string text, ref Context c) =>
-    {
-      switch (text)
-      {
-        case "List":
-          break;
-        case "Search":
-          break;
-        case "Ordering":
-          c["Ordering"] = (Ordering)c["Ordering"] == Ordering.Ascending ? Ordering.Descending : Ordering.Ascending;
-          break;
-      }
+    new() {
+      new StringRow("List", (ref Context context)=>{}),
+      new StringRow("Search", (ref Context context)=>{}),
+      new CustomRow<string>("Ordering",
+        (string text, ref Context context) => $"{text}: {(Ordering)context[text]}",
+        (ref string text, ref Context context) => { context[text] = (Ordering)context[text] == Ordering.Ascending ? Ordering.Descending : Ordering.Ascending; }),
     },
     ref context)
   {

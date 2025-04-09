@@ -1,10 +1,9 @@
-using IH1RZJ.Controller;
 using IH1RZJ.View.ConsoleUI.Screen;
+using IH1RZJ.View.ConsoleUI.Screen.Table;
 
 using Context = System.Collections.Generic.Dictionary<string, object>;
 
 namespace IH1RZJ.View.ConsoleUI;
-
 
 public class ConsoleUI
 {
@@ -14,21 +13,15 @@ public class ConsoleUI
 
   public ConsoleUI()
   {
-    rootScreen = new TableScreen<string>(
-      new() { "Login", "Register" },
-      (string text, ref Context c) => text,
-      (string text, ref Context c) =>
-      {
-        switch (text)
-        {
-          case "Login":
-            new LoginScreen(ref context).Show();
-            break;
-          case "Register":
-            new RegisterScreen(ref context).Show();
-            break;
-        }
-      },
+    rootScreen = new TableScreen(
+      new() {
+        new StringRow("Login", (ref Context context)=>{
+          new LoginScreen(ref context).Show();
+        }),
+        new StringRow("Register", (ref Context context)=>{
+          new RegisterScreen(ref context).Show();
+        }),
+       },
       ref context
     );
   }
@@ -38,7 +31,6 @@ public class ConsoleUI
     try
     {
       rootScreen.Show();
-
     }
     catch (Exception e)
     {

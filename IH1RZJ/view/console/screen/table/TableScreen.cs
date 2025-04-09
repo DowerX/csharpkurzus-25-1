@@ -1,28 +1,12 @@
-namespace IH1RZJ.View.ConsoleUI.Screen;
+namespace IH1RZJ.View.ConsoleUI.Screen.Table;
 
 using Context = Dictionary<string, object>;
 
-public delegate string DisplayFunc<T>(T item, ref Context context);
-public delegate void InteractFunc<T>(T item, ref Context context);
-public class TableScreen<T> : IScreen
+public class TableScreen(List<ITableRow> rows, ref Context context) : IScreen
 {
-  private List<T> items;
+  private readonly List<ITableRow> rows = rows;
   private int index = 0;
-  private DisplayFunc<T> displayFunc;
-  private InteractFunc<T> interactFunc;
-  private Context context;
-
-  public TableScreen(
-    List<T> items,
-    DisplayFunc<T> displayFunc,
-    InteractFunc<T> interactFunc,
-    ref Context context)
-  {
-    this.items = items;
-    this.displayFunc = displayFunc;
-    this.interactFunc = interactFunc;
-    this.context = context;
-  }
+  private Context context = context;
 
   private void Draw()
   {
@@ -31,15 +15,15 @@ public class TableScreen<T> : IScreen
     Console.CursorTop = 0;
     Console.CursorLeft = 0;
 
-    for (int i = 0; i < items.Count; i++)
+    for (int i = 0; i < rows.Count; i++)
     {
-      Console.WriteLine($"{(index == i ? '>' : ' ')} {displayFunc(items[i], ref context)}");
+      Console.WriteLine($"{(index == i ? '>' : ' ')} {rows[i].Text(ref context)}");
     }
   }
 
   public void Show()
   {
-    if (items.Count == 0)
+    if (rows.Count == 0)
     {
       Console.Clear();
       Console.WriteLine("<empty>");
@@ -65,7 +49,7 @@ public class TableScreen<T> : IScreen
           case ConsoleKey.Enter:
           case ConsoleKey.Spacebar:
           case ConsoleKey.RightArrow:
-            interactFunc(items[index], ref context);
+            rows[index].Interact(ref context);
             Draw();
             break;
 
@@ -77,7 +61,7 @@ public class TableScreen<T> : IScreen
 
           case ConsoleKey.PageDown:
           case ConsoleKey.DownArrow:
-            index = Math.Min(items.Count - 1, ++index);
+            index = Math.Min(rows.Count - 1, ++index);
             Draw();
             break;
         }

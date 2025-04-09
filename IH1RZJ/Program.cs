@@ -1,9 +1,4 @@
-﻿using System.Globalization;
-
-using IH1RZJ.Controller;
-using IH1RZJ.DAO;
-using IH1RZJ.Model;
-using IH1RZJ.View.ConsoleUI;
+﻿using IH1RZJ.View.ConsoleUI;
 
 using Microsoft.Extensions.Configuration;
 

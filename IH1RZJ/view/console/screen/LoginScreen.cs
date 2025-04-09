@@ -2,46 +2,46 @@ namespace IH1RZJ.View.ConsoleUI.Screen;
 
 using IH1RZJ.Controller;
 using IH1RZJ.DAO;
+using IH1RZJ.View.ConsoleUI.Screen.Table;
 
 using Context = Dictionary<string, object>;
 
-public class LoginScreen : TableScreen<string>
+public class LoginScreen : TableScreen
 {
   public LoginScreen(ref Context context) :
   base(
-    new() { "Username", "Password", "Login" },
-    (string text, ref Context c) =>
-    {
-      switch (text)
-      {
-        case "Username":
-          return $"{text}: {(c.ContainsKey(text) ? c[text] : "")}";
-        case "Password":
-          return $"{text}: {(c.ContainsKey(text) ? string.Concat(Enumerable.Repeat("*", ((string)c[text]).Length)) : "")}";
-        default:
-          return text;
-      }
-    },
-    (string text, ref Context c) =>
-    {
-      Console.Clear();
-      if (text != "Login")
-      {
-        Console.Write(text + ": ");
-        c[text] = Console.ReadLine();
-      }
-      else if (c.ContainsKey("Username") && c.ContainsKey("Password"))
-      {
-        if (new UserController(DAOFactory.Instance.UserDAO).Login((string)c["Username"], (string)c["Password"]))
-        {
-          new MainScreen(ref c).Show();
-        }
-        else
-        {
-          Console.WriteLine("Failed login! Press ENTER...");
-          Console.ReadLine();
-        }
-      }
+    new() {
+      new CustomRow<string>("Username",
+        (string text, ref Context context) => $"{text}: {(context.ContainsKey(text) ? (string)context[text] : "")}",
+        (ref string text, ref Context context) => {
+          Console.Clear();
+          Console.Write(text + ": ");
+          context[text] = Console.ReadLine();
+        }),
+      new CustomRow<string>("Password",
+        (string text, ref Context context) => $"{text}: {(context.ContainsKey(text) ? string.Concat(Enumerable.Repeat("*", ((string)context[text]).Length)) : "")}",
+        (ref string text, ref Context context) => {
+          Console.Clear();
+          Console.Write(text + ": ");
+          context[text] = Console.ReadLine();
+        }),
+      new StringRow("Login",
+        (ref Context context) => {
+          if (context.ContainsKey("Username") && context.ContainsKey("Password"))
+          {
+            if (new UserController(DAOFactory.Instance.UserDAO).Login((string)context["Username"], (string)context["Password"]))
+            {
+            new MainScreen(ref context).Show();
+            }
+            else
+            {
+            Console.WriteLine("Failed login! Press ENTER...");
+            Console.ReadLine();
+            }
+          } else {
+            Console.WriteLine("Missing username or password! Press ENTER...");
+          }
+      })
     },
     ref context)
   { }
