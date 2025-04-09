@@ -61,6 +61,7 @@ public class MovieJsonDAO : IMovieDAO, IDisposable
   public void Create(Movie movie)
   {
     movies.Add(movie);
+    Save();
   }
 
   public IEnumerable<Movie> List(Guid? id, string? title)
@@ -82,5 +83,6 @@ public class MovieJsonDAO : IMovieDAO, IDisposable
   public void Delete(Movie movie)
   {
     movies.Remove(movie);
+    Save();
   }
 }

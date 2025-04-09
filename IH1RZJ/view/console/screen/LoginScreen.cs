@@ -31,12 +31,12 @@ public class LoginScreen : TableScreen
           {
             if (new UserController(DAOFactory.Instance.UserDAO).Login((string)context["Username"], (string)context["Password"]))
             {
-            new MainScreen(ref context).Show();
+              new MainScreen(ref context).Show();
             }
             else
             {
-            Console.WriteLine("Failed login! Press ENTER...");
-            Console.ReadLine();
+              Console.WriteLine("Failed login! Press ENTER...");
+              Console.ReadLine();
             }
           } else {
             Console.WriteLine("Missing username or password! Press ENTER...");
