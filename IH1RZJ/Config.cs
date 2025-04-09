@@ -21,7 +21,7 @@ public class Config
   }
 
   public string UserPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "users.json");
-  public string PersonPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "person.json");
+  public string PersonPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "people.json");
 
   public JsonSerializerOptions JsonOptions = new()
   {
