@@ -1,4 +1,9 @@
-﻿using IH1RZJ.View.ConsoleUI;
+﻿using System.Globalization;
+
+using IH1RZJ.Controller;
+using IH1RZJ.DAO;
+using IH1RZJ.Model;
+using IH1RZJ.View.ConsoleUI;
 
 using Microsoft.Extensions.Configuration;
 
@@ -22,6 +27,8 @@ internal class Program
       Console.Error.WriteLine(e.Message);
       return -1;
     }
+
+    // new PersonController(DAOFactory.Instance.PersonDAO).Create("Adam Scott", DateTime.UtcNow, null, "cool guy");
 
     // interface
     new ConsoleUI().Show();

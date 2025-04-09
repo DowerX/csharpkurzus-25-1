@@ -1,7 +1,5 @@
 namespace IH1RZJ.View.ConsoleUI.Screen;
 
-using IH1RZJ.Controller;
-
 using Context = Dictionary<string, object>;
 
 public class MainScreen : TableScreen<string>
@@ -15,7 +13,7 @@ public class MainScreen : TableScreen<string>
       switch (text)
       {
         case "People":
-          // new PersonScreen(ref c, personController).Show();
+          new PersonScreen(ref c).Show();
           break;
       }
     },

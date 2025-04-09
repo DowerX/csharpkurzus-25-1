@@ -39,6 +39,14 @@ public class TableScreen<T> : IScreen
 
   public void Show()
   {
+    if (items.Count == 0)
+    {
+      Console.Clear();
+      Console.WriteLine("<empty>");
+      Console.ReadLine();
+      return;
+    }
+
     Draw();
 
     bool stop = false;
