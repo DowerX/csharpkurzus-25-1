@@ -4,7 +4,7 @@ namespace IH1RZJ.DAO;
 
 public class DAOFactory
 {
-  private static DAOFactory instance;
+  private static DAOFactory instance = new DAOFactory();
 
   public static DAOFactory Instance
   {
@@ -18,12 +18,12 @@ public class DAOFactory
   }
   private DAOFactory() { }
 
-  private IUserDAO userDAO = new UserJsonDAO(Config.Instance.UsersPath);
+  private readonly IUserDAO userDAO = new UserJsonDAO(Config.Instance.UsersPath);
   public IUserDAO UserDAO => userDAO;
 
-  private IPersonDAO personDAO = new PersonJsonDAO(Config.Instance.PeoplePath);
+  private readonly IPersonDAO personDAO = new PersonJsonDAO(Config.Instance.PeoplePath);
   public IPersonDAO PersonDAO => personDAO;
 
-  private IMovieDAO movieDAO = new MovieJsonDAO(Config.Instance.MoviesPath);
+  private readonly IMovieDAO movieDAO = new MovieJsonDAO(Config.Instance.MoviesPath);
   public IMovieDAO MovieDAO => movieDAO;
 }
