@@ -1,6 +1,5 @@
 ﻿using IH1RZJ.Controller;
 using IH1RZJ.DAO;
-using IH1RZJ.View.ConsoleUI;
 
 using Microsoft.Extensions.Configuration;
 
@@ -29,6 +28,5 @@ internal class Program
     // new MovieController(DAOFactory.Instance.MovieDAO).Create("A Minecraft Movie", "gayming", DateTime.UtcNow);
 
     // interface
-    new ConsoleUI().Show();
   }
 }
