@@ -17,10 +17,21 @@ public class PeopleListWindow : Window
   {
     Title = "People";
 
+    var addButton = new Button
+    {
+      Text = "Add",
+    };
+    addButton.Clicked += () => Application.Run(new PersonEditWindow(new Person
+    {
+      Name = "",
+      Birthday = DateTime.Now,
+      Bio = ""
+    }));
+
     view = new TableView
     {
       X = 0,
-      Y = 0,
+      Y = Pos.Bottom(addButton),
       Width = Dim.Fill(),
       Height = Dim.Fill()
     };
@@ -34,7 +45,7 @@ public class PeopleListWindow : Window
       await update();
     };
 
-    Add(view);
+    Add(addButton, view);
 
     Task.Run(update);
   }

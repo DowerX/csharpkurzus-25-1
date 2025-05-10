@@ -113,11 +113,22 @@ public class PersonEditWindow : Window
       Application.RequestStop();
     };
 
+    var deleteButton = new Button
+    {
+      Text = "Delete",
+      X = Pos.Center(),
+      Y = Pos.Bottom(okButton)
+    };
+    deleteButton.Clicked += async () => {
+      await controller.Delete(person);
+      Application.RequestStop();
+    };
+
     var cancelButton = new Button
     {
       Text = "Cancel",
       X = Pos.Center(),
-      Y = Pos.Bottom(okButton)
+      Y = Pos.Bottom(deleteButton)
     };
     cancelButton.Clicked += () => Application.RequestStop();
 
@@ -125,6 +136,6 @@ public class PersonEditWindow : Window
       birthdayLabel, birthdayField,
       deathLabel, deathField,
       bioLabel, bioField,
-      okButton, cancelButton);
+      okButton, deleteButton, cancelButton);
   }
 }
