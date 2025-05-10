@@ -12,9 +12,9 @@ public class MovieController
     this.dao = dao ?? throw new ArgumentNullException(nameof(dao));
   }
 
-  public void Create(string title, string description, DateTime releaseDate)
+  public async Task Create(string title, string description, DateTime releaseDate)
   {
-    dao.Create(new Movie
+    await dao.Create(new Movie
     {
       Title = title,
       Description = description,
@@ -22,18 +22,18 @@ public class MovieController
     });
   }
 
-  public IEnumerable<Movie> List(Guid? id, string? title)
+  public Task<IEnumerable<Movie>> List(Guid? id, string? title)
   {
     return dao.List(id, title);
   }
 
-  public void Update(Movie movie)
+  public async Task Update(Movie movie)
   {
-    dao.Update(movie);
+    await dao.Update(movie);
   }
 
-  public void Delete(Movie movie)
+  public async Task Delete(Movie movie)
   {
-    dao.Delete(movie);
+    await dao.Delete(movie);
   }
 }

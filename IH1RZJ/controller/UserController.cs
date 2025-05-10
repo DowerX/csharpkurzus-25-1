@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using IH1RZJ.DAO;
 using IH1RZJ.Model;
 
@@ -12,10 +14,10 @@ public class UserController
     this.dao = dao ?? throw new ArgumentNullException(nameof(dao));
   }
 
-  public void Create(string username, string password, bool isAdmin)
+  public async Task Create(string username, string password, bool isAdmin)
   {
     // TODO: hash password
-    dao.Create(new User
+    await dao.Create(new User
     {
       Username = username,
       PasswordHash = password,
@@ -23,28 +25,28 @@ public class UserController
     });
   }
 
-  public IEnumerable<User> List(Guid? id, string? username, bool? isAdmin)
+  public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin)
   {
     return dao.List(id, username, isAdmin);
   }
 
-  public void Update(User user)
+  public async Task Update(User user)
   {
     // TODO: hash password
-    dao.Update(user);
+    await dao.Update(user);
   }
 
-  public void Delete(User user)
+  public async Task Delete(User user)
   {
-    dao.Delete(user);
+    await dao.Delete(user);
   }
 
-  public bool Login(string username, string password)
+  public async Task<bool> Login(string username, string password)
   {
     // TODO: hash password
     try
     {
-      return dao.List(null, username, null).Single().PasswordHash == password;
+      return (await dao.List(null, username, null)).Single().PasswordHash == password;
     }
     catch (Exception) // didn't find any users with that name
     {
@@ -52,15 +54,15 @@ public class UserController
     }
   }
 
-  public bool Register(string username, string password, string repeatPassword)
+  public async Task<bool> Register(string username, string password, string repeatPassword)
   {
     if (password != repeatPassword)
       return false;
 
-    if (dao.List(null, username, null).Count() != 0)
+    if ((await dao.List(null, username, null)).Count() != 0)
       return false;
 
-    dao.Create(new User
+    await dao.Create(new User
     {
       Username = username,
       PasswordHash = password,

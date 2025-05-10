@@ -6,7 +6,7 @@ using IH1RZJ.Model.DTO.Json;
 
 namespace IH1RZJ.DAO.Json;
 
-public class MovieJsonDAO : IMovieDAO, IDisposable
+public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
 {
   private List<Movie> movies;
   private string path;
@@ -28,21 +28,18 @@ public class MovieJsonDAO : IMovieDAO, IDisposable
       .ToList();
   }
 
-  public void Save()
+  public async Task Save()
   {
     string tempFile = Path.GetTempFileName();
     try
     {
-      using FileStream stream = File.Create(tempFile);
+      var dtoList = movies
+        .AsParallel()
+        .Select(movie => movie.ToDTO())
+        .ToList();
 
-      stream.Write(System.Text.Encoding.UTF8.GetBytes(
-        JsonSerializer.Serialize(
-          movies
-            .AsParallel()
-            .Select(user => user.ToDTO())
-            .ToList(),
-          Config.Instance.JsonOptions
-      )));
+      await using FileStream stream = File.Create(tempFile);
+      await JsonSerializer.SerializeAsync(stream, dtoList, Config.Instance.JsonOptions);
       stream.Close();
 
       File.Move(tempFile, path, true);
@@ -53,36 +50,40 @@ public class MovieJsonDAO : IMovieDAO, IDisposable
     }
   }
 
-  public void Dispose()
+  public async ValueTask DisposeAsync()
   {
-    Save();
+    await Save();
   }
 
-  public void Create(Movie movie)
+  public async Task Create(Movie movie)
   {
     movies.Add(movie);
-    Save();
+    await Save();
   }
 
-  public IEnumerable<Movie> List(Guid? id, string? title)
+  public Task<IEnumerable<Movie>> List(Guid? id, string? title)
   {
-    return movies
-      .AsParallel()
+    var result = movies
       .Where(movie => id == null || movie.ID == id)
       .Where(movie => title == null || movie.Title == title)
       .ToList();
+
+    return Task.FromResult<IEnumerable<Movie>>(result);
   }
 
-  public void Update(Movie movie)
+  public async Task Update(Movie movie)
   {
     int index = movies.FindIndex(u => movie.ID == u.ID);
-    movies[index] = movie;
-    Save();
+    if (index != -1)
+    {
+      movies[index] = movie;
+      await Save();
+    }
   }
 
-  public void Delete(Movie movie)
+  public async Task Delete(Movie movie)
   {
     movies.Remove(movie);
-    Save();
+    await Save();
   }
 }

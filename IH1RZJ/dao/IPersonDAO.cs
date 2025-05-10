@@ -4,8 +4,8 @@ namespace IH1RZJ.DAO;
 
 public interface IPersonDAO
 {
-  public void Create(Person person);
-  public IEnumerable<Person> List(Guid? id, string? name);
-  public void Update(Person person);
-  public void Delete(Person person);
+  public Task Create(Person person);
+  public Task<IEnumerable<Person>> List(Guid? id, string? name);
+  public Task Update(Person person);
+  public Task Delete(Person person);
 }

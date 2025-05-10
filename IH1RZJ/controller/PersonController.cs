@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using IH1RZJ.DAO;
 using IH1RZJ.Model;
 
@@ -12,9 +14,9 @@ public class PersonController
     this.dao = dao ?? throw new ArgumentNullException(nameof(dao));
   }
 
-  public void Create(string name, DateTime birthday, DateTime? death, string bio)
+  public async Task Create(string name, DateTime birthday, DateTime? death, string bio)
   {
-    dao.Create(new Person
+    await dao.Create(new Person
     {
       Name = name,
       Birthday = birthday,
@@ -23,18 +25,18 @@ public class PersonController
     });
   }
 
-  public IEnumerable<Person> List(Guid? id, string? name)
+  public Task<IEnumerable<Person>> List(Guid? id, string? name)
   {
     return dao.List(id, name);
   }
 
-  public void Update(Person person)
+  public async Task Update(Person person)
   {
-    dao.Update(person);
+    await dao.Update(person);
   }
 
-  public void Delete(Person person)
+  public async Task Delete(Person person)
   {
-    dao.Delete(person);
+    await dao.Delete(person);
   }
 }

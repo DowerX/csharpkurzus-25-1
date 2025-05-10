@@ -6,7 +6,7 @@ using IH1RZJ.Model.DTO;
 
 namespace IH1RZJ.DAO.Json;
 
-public class UserJsonDAO : IUserDAO, IDisposable
+public class UserJsonDAO : IUserDAO, IAsyncDisposable
 {
   private List<User> users;
   private string path;
@@ -28,21 +28,18 @@ public class UserJsonDAO : IUserDAO, IDisposable
       .ToList();
   }
 
-  public void Save()
+  public async Task Save()
   {
     string tempFile = Path.GetTempFileName();
     try
     {
-      using FileStream stream = File.Create(tempFile);
+      var dtoList = users
+        .AsParallel()
+        .Select(movie => movie.ToDTO())
+        .ToList();
 
-      stream.Write(System.Text.Encoding.UTF8.GetBytes(
-        JsonSerializer.Serialize(
-          users
-            .AsParallel()
-            .Select(user => user.ToDTO())
-            .ToList(),
-          Config.Instance.JsonOptions
-      )));
+      await using FileStream stream = File.Create(tempFile);
+      await JsonSerializer.SerializeAsync(stream, dtoList, Config.Instance.JsonOptions);
       stream.Close();
 
       File.Move(tempFile, path, true);
@@ -53,37 +50,42 @@ public class UserJsonDAO : IUserDAO, IDisposable
     }
   }
 
-  public void Dispose()
+  public async ValueTask DisposeAsync()
   {
-    Save();
+    await Save();
   }
 
-  public void Create(User user)
+  public async Task Create(User user)
   {
     users.Add(user);
-    Save();
+    await Save();
   }
 
-  public void Delete(User user)
+  public async Task Delete(User user)
   {
     users.Remove(user);
-    Save();
+    await Save();
   }
 
-  public IEnumerable<User> List(Guid? id, string? username, bool? isAdmin)
+  public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin)
   {
-    return users
+    var result = users
       .AsParallel()
       .Where(user => id == null || user.ID == id)
       .Where(user => username == null || user.Username == username)
       .Where(user => isAdmin == null || user.IsAdmin == isAdmin)
       .ToList();
+
+    return Task.FromResult<IEnumerable<User>>(result);
   }
 
-  public void Update(User user)
+  public async Task Update(User user)
   {
     int index = users.FindIndex(u => user.ID == u.ID);
-    users[index] = user;
-    Save();
+    if (index != -1)
+    {
+      users[index] = user;
+      await Save();
+    }
   }
 }

@@ -4,8 +4,8 @@ namespace IH1RZJ.DAO;
 
 public interface IUserDAO
 {
-  public void Create(User user);
-  public IEnumerable<User> List(Guid? id, string? username, bool? isAdmin);
-  public void Update(User user);
-  public void Delete(User user);
+  public Task Create(User user);
+  public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin);
+  public Task Update(User user);
+  public Task Delete(User user);
 }

@@ -7,7 +7,7 @@ using IH1RZJ.Model.DTO;
 
 namespace IH1RZJ.DAO.Json;
 
-public class PersonJsonDAO : IPersonDAO, IDisposable
+public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
 {
   private List<Person> people;
   private string path;
@@ -29,21 +29,18 @@ public class PersonJsonDAO : IPersonDAO, IDisposable
       .ToList();
   }
 
-  public void Save()
+  public async Task Save()
   {
     string tempFile = Path.GetTempFileName();
     try
     {
-      using FileStream stream = File.Create(tempFile);
+      var dtoList = people
+        .AsParallel()
+        .Select(person => person.ToDTO())
+        .ToList();
 
-      stream.Write(System.Text.Encoding.UTF8.GetBytes(
-        JsonSerializer.Serialize(
-          people
-            .AsParallel()
-            .Select(person => person.ToDTO())
-            .ToList(),
-          Config.Instance.JsonOptions
-      )));
+      await using FileStream stream = File.Create(tempFile);
+      await JsonSerializer.SerializeAsync(stream, dtoList, Config.Instance.JsonOptions);
       stream.Close();
 
       File.Move(tempFile, path, true);
@@ -54,36 +51,41 @@ public class PersonJsonDAO : IPersonDAO, IDisposable
     }
   }
 
-  public void Dispose()
+  public async ValueTask DisposeAsync()
   {
-    Save();
+    await Save();
   }
 
-  public void Create(Person person)
+  public async Task Create(Person person)
   {
     people.Add(person);
-    Save();
+    await Save();
   }
 
-  public void Delete(Person person)
+  public async Task Delete(Person person)
   {
     people.Remove(person);
-    Save();
+    await Save();
   }
 
-  public IEnumerable<Person> List(Guid? id, string? name)
+  public Task<IEnumerable<Person>> List(Guid? id, string? name)
   {
-    return people
+    var result = people
       .AsParallel()
       .Where(person => id == null || person.ID == id)
       .Where(person => name == null || person.Name == name)
       .ToList();
+
+    return Task.FromResult<IEnumerable<Person>>(result);
   }
 
-  public void Update(Person person)
+  public async Task Update(Person person)
   {
     int index = people.FindIndex(p => person.ID == p.ID);
-    people[index] = person;
-    Save();
+    if (index != -1)
+    {
+      people[index] = person;
+      await Save();
+    }
   }
 }
