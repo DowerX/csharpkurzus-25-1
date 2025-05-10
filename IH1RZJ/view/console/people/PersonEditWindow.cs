@@ -109,7 +109,15 @@ public class PersonEditWindow : Window
 
       person.Bio = (string)bioField.Text;
 
-      await controller.Update(person);
+      if ((await controller.List(person.ID, null)).Count() == 0)
+      {
+        await controller.Create(person.Name, person.Birthday, person.Death, person.Bio);
+      }
+      else
+      {
+        await controller.Update(person);
+      }
+
       Application.RequestStop();
     };
 
@@ -119,7 +127,8 @@ public class PersonEditWindow : Window
       X = Pos.Center(),
       Y = Pos.Bottom(okButton)
     };
-    deleteButton.Clicked += async () => {
+    deleteButton.Clicked += async () =>
+    {
       await controller.Delete(person);
       Application.RequestStop();
     };

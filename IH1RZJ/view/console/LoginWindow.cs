@@ -17,19 +17,19 @@ public class LoginWindow : Window
     };
     var usernameField = new TextField
     {
-      X = Pos.Right(usernameLabel) + 1,
+      X = Pos.Right(usernameLabel),
       Width = Dim.Fill()
     };
 
     var passwordLabel = new Label
     {
       Text = "Password:",
-      Y = Pos.Bottom(usernameLabel) + 1
+      Y = Pos.Bottom(usernameLabel)
     };
     var passwordField = new TextField
     {
-      X = Pos.Right(passwordLabel) + 1,
-      Y = Pos.Bottom(usernameField) + 1,
+      X = Pos.Right(passwordLabel),
+      Y = Pos.Bottom(usernameField),
       Width = Dim.Fill(),
       Secret = true
     };
@@ -37,14 +37,14 @@ public class LoginWindow : Window
     var loginButton = new Button
     {
       Text = "Login",
-      Y = Pos.Bottom(passwordField) + 1,
+      Y = Pos.Bottom(passwordField),
       X = Pos.Center(),
     };
     loginButton.Clicked += async () =>
     {
       if (await controller.Login(
-        usernameField.Text?.ToString() ?? string.Empty,
-        passwordField.Text?.ToString() ?? string.Empty))
+        (string)usernameField.Text,
+        (string)passwordField.Text))
       {
         // MessageBox.Query("Logging In", "Login Succesful", "Ok");
         Application.Run<MainWindow>();
@@ -58,7 +58,7 @@ public class LoginWindow : Window
     var backButton = new Button
     {
       Text = "Back",
-      Y = Pos.Bottom(loginButton) + 1,
+      Y = Pos.Bottom(loginButton),
       X = Pos.Center(),
     };
     backButton.Clicked += () =>

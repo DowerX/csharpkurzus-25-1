@@ -55,6 +55,7 @@ public class PeopleListWindow : Window
     data = await controller.List(null, null);
     view.Table = new PeopleTable(data);
     view.Update();
+    view.Redraw(Rect.Empty);
   }
 
   class PeopleTable : DataTable

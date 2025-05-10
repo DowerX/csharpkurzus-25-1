@@ -17,19 +17,19 @@ public class RegisterWindow : Window
     };
     var usernameField = new TextField
     {
-      X = Pos.Right(usernameLabel) + 1,
+      X = Pos.Right(usernameLabel),
       Width = Dim.Fill()
     };
 
     var passwordLabel = new Label
     {
       Text = "Password:",
-      Y = Pos.Bottom(usernameLabel) + 1
+      Y = Pos.Bottom(usernameLabel)
     };
     var passwordField = new TextField
     {
-      X = Pos.Right(passwordLabel) + 1,
-      Y = Pos.Bottom(usernameField) + 1,
+      X = Pos.Right(passwordLabel),
+      Y = Pos.Bottom(usernameField),
       Width = Dim.Fill(),
       Secret = true
     };
@@ -37,12 +37,12 @@ public class RegisterWindow : Window
     var passwordRepeatLabel = new Label
     {
       Text = "Repeat Password:",
-      Y = Pos.Bottom(passwordField) + 1
+      Y = Pos.Bottom(passwordField)
     };
     var passwordRepeatField = new TextField
     {
-      X = Pos.Right(passwordRepeatLabel) + 1,
-      Y = Pos.Bottom(passwordField) + 1,
+      X = Pos.Right(passwordRepeatLabel),
+      Y = Pos.Bottom(passwordField),
       Width = Dim.Fill(),
       Secret = true
     };
@@ -50,7 +50,7 @@ public class RegisterWindow : Window
     var registerButton = new Button
     {
       Text = "Register",
-      Y = Pos.Bottom(passwordRepeatField) + 1,
+      Y = Pos.Bottom(passwordRepeatField),
       X = Pos.Center(),
     };
     registerButton.Clicked += async () =>
@@ -71,7 +71,7 @@ public class RegisterWindow : Window
     var backButton = new Button
     {
       Text = "Back",
-      Y = Pos.Bottom(registerButton) + 1,
+      Y = Pos.Bottom(registerButton),
       X = Pos.Center(),
     };
     backButton.Clicked += () =>

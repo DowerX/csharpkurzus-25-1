@@ -20,21 +20,21 @@ public class MainWindow : Window
     var moviesButton = new Button
     {
       Text = "Movies",
-      Y = Pos.Bottom(peopleButton) + 1
+      Y = Pos.Bottom(peopleButton)
     };
     moviesButton.Clicked += () => Application.Run<Window>();
 
     var reviewsButton = new Button
     {
       Text = "Reviews",
-      Y = Pos.Bottom(moviesButton) + 1
+      Y = Pos.Bottom(moviesButton)
     };
     reviewsButton.Clicked += () => Application.Run<Window>();
 
     var logoutButton = new Button
     {
       Text = "Logout",
-      Y = Pos.Bottom(reviewsButton) + 1
+      Y = Pos.Bottom(reviewsButton)
     };
     logoutButton.Clicked += () => Application.RequestStop();
 

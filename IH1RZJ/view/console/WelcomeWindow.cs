@@ -15,14 +15,14 @@ public class WelcomeWindow : Window
     var registerButton = new Button
     {
       Text = "Register",
-      Y = Pos.Bottom(loginButton) + 1
+      Y = Pos.Bottom(loginButton)
     };
     registerButton.Clicked += ()=> Application.Run<RegisterWindow>();
 
     var quit = new Button
     {
       Text = "Quit",
-      Y = Pos.Bottom(registerButton) + 1
+      Y = Pos.Bottom(registerButton)
     };
     quit.Clicked += () => Application.RequestStop();
 
