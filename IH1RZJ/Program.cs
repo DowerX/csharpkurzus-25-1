@@ -1,7 +1,6 @@
-﻿using IH1RZJ.Controller;
-using IH1RZJ.DAO;
+﻿using Microsoft.Extensions.Configuration;
 
-using Microsoft.Extensions.Configuration;
+using Terminal.Gui;
 
 namespace IH1RZJ;
 
@@ -28,5 +27,8 @@ internal class Program
     // new MovieController(DAOFactory.Instance.MovieDAO).Create("A Minecraft Movie", "gayming", DateTime.UtcNow);
 
     // interface
+    Application.QuitKey = Key.Esc;
+    Application.Run<WelcomeWindow>();
+    Application.Shutdown();
   }
 }
