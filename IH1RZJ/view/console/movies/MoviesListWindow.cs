@@ -151,6 +151,12 @@ public class MoviesListWindow : Window
       column.ReadOnly = false;
       Columns.Add(column);
 
+      column = new DataColumn();
+      column.DataType = typeof(float);
+      column.ColumnName = "Score";
+      column.ReadOnly = false;
+      Columns.Add(column);
+
       // populate rows
       foreach (var movie in movies)
       {
@@ -158,6 +164,7 @@ public class MoviesListWindow : Window
         row["Title"] = movie.Title;
         row["Description"] = movie.Description;
         row["Release date"] = movie.ReleaseDate.ToString("yyyy/MM/dd");
+        row["Score"] = movie.Score;
         Rows.Add(row);
       }
     }

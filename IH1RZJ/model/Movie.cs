@@ -6,4 +6,5 @@ public record class Movie
   public required string Title { get; set; }
   public required string Description { get; set; }
   public required DateTime ReleaseDate { get; set; }
+  public float Score { get; set; } = 0f;
 }

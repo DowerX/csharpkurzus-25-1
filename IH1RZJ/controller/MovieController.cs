@@ -24,9 +24,18 @@ public class MovieController
     });
   }
 
-  public Task<IEnumerable<Movie>> List(Guid? id, string? title)
+  public async Task<IEnumerable<Movie>> List(Guid? id, string? title)
   {
-    return movieDao.List(id, title);
+    var movies = (await movieDao.List(id, title)).ToList();
+    for (int i = 0; i < movies.Count(); i++)
+    {
+      movies[i].Score = (await reviewDAO.List(null, movies[i].ID, null, null))
+      .AsParallel()
+      .Select(review => review.Score)
+      .DefaultIfEmpty(0)
+      .Average();
+    }
+    return movies;
   }
 
   public async Task Update(Movie movie)
