@@ -3,6 +3,7 @@ using System.Data;
 using IH1RZJ.Controller;
 using IH1RZJ.DAO;
 using IH1RZJ.Model;
+using IH1RZJ.Utils;
 
 using Terminal.Gui;
 
@@ -12,6 +13,7 @@ public class MoviesListWindow : Window
 
   private IEnumerable<Movie>? data;
   private readonly TableView view;
+  private bool descending = false;
 
   public MoviesListWindow()
   {
@@ -29,7 +31,23 @@ public class MoviesListWindow : Window
         Description = "",
         ReleaseDate = DateTime.Now
       }));
-      await update();
+      await Update();
+      Sort();
+      Display();
+    };
+
+    var sortButton = new Button
+    {
+      Text = "Ascending",
+      X = Pos.Right(addButton)
+    };
+    sortButton.Clicked += () =>
+    {
+      descending = !descending;
+      sortButton.Text = descending ? "Descending" : "Ascending";
+
+      Sort();
+      Display();
     };
 
     view = new TableView
@@ -46,20 +64,37 @@ public class MoviesListWindow : Window
       var item = data.ToList()[args.Row];
 
       Application.Run(new MovieEditWindow(item));
-      await update();
+      await Update();
+      Sort();
+      Display();
     };
 
-    Add(addButton, view);
+    Add(addButton, sortButton, view);
 
-    Task.Run(update);
+    Task.Run(async () =>
+    {
+      await Update();
+      Sort();
+      Display();
+    });
   }
 
-  private async Task update()
+  private void Display()
   {
-    data = await controller.List(null, null);
+    if (data == null) return;
     view.Table = new MoviesTable(data);
     view.Update();
     view.Redraw(Rect.Empty);
+  }
+
+  private void Sort()
+  {
+    data = data?.OrderBy(item => item.Title).If(descending, movies => movies.Reverse());
+  }
+
+  private async Task Update()
+  {
+    data = await controller.List(null, null);
   }
 
   class MoviesTable : DataTable

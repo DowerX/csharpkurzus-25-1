@@ -3,6 +3,7 @@ using System.Data;
 using IH1RZJ.Controller;
 using IH1RZJ.DAO;
 using IH1RZJ.Model;
+using IH1RZJ.Utils;
 
 using Terminal.Gui;
 
@@ -12,6 +13,7 @@ public class PeopleListWindow : Window
 
   private IEnumerable<Person>? data;
   private readonly TableView view;
+  private bool descending = false;
 
   public PeopleListWindow()
   {
@@ -29,7 +31,22 @@ public class PeopleListWindow : Window
         Birthday = DateTime.Now,
         Bio = ""
       }));
-      await update();
+      await Update();
+      Display();
+    };
+
+    var sortButton = new Button
+    {
+      Text = "Ascending",
+      X = Pos.Right(addButton)
+    };
+    sortButton.Clicked += () =>
+    {
+      descending = !descending;
+      sortButton.Text = descending ? "Descending" : "Ascending";
+
+      Sort();
+      Display();
     };
 
     view = new TableView
@@ -46,20 +63,37 @@ public class PeopleListWindow : Window
       var item = data.ToList()[args.Row];
 
       Application.Run(new PersonEditWindow(item));
-      await update();
+      await Update();
+      Sort();
+      Display();
     };
 
-    Add(addButton, view);
+    Add(addButton, sortButton, view);
 
-    Task.Run(update);
+    Task.Run(async () =>
+    {
+      await Update();
+      Sort();
+      Display();
+    });
   }
 
-  private async Task update()
+  private void Display()
   {
-    data = await controller.List(null, null);
+    if (data == null) return;
     view.Table = new PeopleTable(data);
     view.Update();
     view.Redraw(Rect.Empty);
+  }
+
+  private void Sort()
+  {
+    data = data?.OrderBy(item => item.Name).If(descending, people => people.Reverse());
+  }
+
+  private async Task Update()
+  {
+    data = await controller.List(null, null);
   }
 
   class PeopleTable : DataTable
