@@ -49,10 +49,29 @@ public class PeopleListWindow : Window
       Display();
     };
 
+    var searchButton = new Button
+    {
+      Text = "Search",
+      Y = Pos.Bottom(addButton)
+    };
+    var searchField = new TextField
+    {
+      X = Pos.Right(searchButton),
+      Y = Pos.Bottom(addButton),
+      Width = Dim.Fill()
+    };
+    searchButton.Clicked += async () =>
+    {
+      await Update();
+      Search((string)searchField.Text);
+      Sort();
+      Display();
+    };
+
     view = new TableView
     {
       X = 0,
-      Y = Pos.Bottom(addButton),
+      Y = Pos.Bottom(searchButton),
       Width = Dim.Fill(),
       Height = Dim.Fill()
     };
@@ -68,7 +87,9 @@ public class PeopleListWindow : Window
       Display();
     };
 
-    Add(addButton, sortButton, view);
+    Add(addButton, sortButton,
+      searchButton, searchField,
+      view);
 
     Task.Run(async () =>
     {
@@ -89,6 +110,11 @@ public class PeopleListWindow : Window
   private void Sort()
   {
     data = data?.OrderBy(item => item.Name).If(descending, people => people.Reverse());
+  }
+
+  private void Search(string term)
+  {
+    data = data?.Where(person => person.Name.Contains(term));
   }
 
   private async Task Update()

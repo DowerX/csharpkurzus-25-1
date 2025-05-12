@@ -50,10 +50,29 @@ public class MoviesListWindow : Window
       Display();
     };
 
+    var searchButton = new Button
+    {
+      Text = "Search",
+      Y = Pos.Bottom(addButton)
+    };
+    var searchField = new TextField
+    {
+      X = Pos.Right(searchButton),
+      Y = Pos.Bottom(addButton),
+      Width = Dim.Fill()
+    };
+    searchButton.Clicked += async () =>
+    {
+      await Update();
+      Search((string)searchField.Text);
+      Sort();
+      Display();
+    };
+
     view = new TableView
     {
       X = 0,
-      Y = Pos.Bottom(addButton),
+      Y = Pos.Bottom(searchButton),
       Width = Dim.Fill(),
       Height = Dim.Fill()
     };
@@ -69,7 +88,9 @@ public class MoviesListWindow : Window
       Display();
     };
 
-    Add(addButton, sortButton, view);
+    Add(addButton, sortButton,
+      searchButton, searchField,
+      view);
 
     Task.Run(async () =>
     {
@@ -90,6 +111,11 @@ public class MoviesListWindow : Window
   private void Sort()
   {
     data = data?.OrderBy(item => item.Title).If(descending, movies => movies.Reverse());
+  }
+
+  private void Search(string term)
+  {
+    data = data?.Where(movie => movie.Title.Contains(term));
   }
 
   private async Task Update()
