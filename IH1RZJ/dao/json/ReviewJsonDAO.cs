@@ -6,23 +6,23 @@ using IH1RZJ.Model.DTO;
 
 namespace IH1RZJ.DAO.Json;
 
-public class UserJsonDAO : IUserDAO, IAsyncDisposable
+public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
 {
-  private List<User> users;
+  private List<Review> reviews;
   private string path;
 
-  public UserJsonDAO(string path)
+  public ReviewJsonDAO(string path)
   {
     this.path = path;
     using FileStream stream = File.OpenRead(path);
-    List<UserJsonDTO>? userDTOs = JsonSerializer.Deserialize<List<UserJsonDTO>>(stream, Config.JsonOptions);
+    List<ReviewJsonDTO>? reviewDTOs = JsonSerializer.Deserialize<List<ReviewJsonDTO>>(stream, Config.JsonOptions);
 
-    if (userDTOs == null)
+    if (reviewDTOs == null)
     {
       throw new Exception("Failed to load users!");
     }
 
-    users = userDTOs
+    reviews = reviewDTOs
       .AsParallel()
       .Select(dto => dto.ToDomain())
       .ToList();
@@ -33,7 +33,7 @@ public class UserJsonDAO : IUserDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = users
+      var dtoList = reviews
         .AsParallel()
         .Select(movie => movie.ToDTO())
         .ToList();
@@ -55,36 +55,37 @@ public class UserJsonDAO : IUserDAO, IAsyncDisposable
     await Save();
   }
 
-  public async Task Create(User user)
+  public async Task Create(Review review)
   {
-    users.Add(user);
+    reviews.Add(review);
     await Save();
   }
 
-  public async Task Delete(User user)
+  public async Task Delete(Review review)
   {
-    users.Remove(user);
+    reviews.Remove(review);
     await Save();
   }
 
-  public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin)
+  public Task<IEnumerable<Review>> List(Guid? id, Guid? movie, Guid? user, float? score)
   {
-    var result = users
+    var result = reviews
       .AsParallel()
-      .Where(user => id == null || user.ID == id)
-      .Where(user => username == null || user.Username == username)
-      .Where(user => isAdmin == null || user.IsAdmin == isAdmin)
+      .Where(review => id == null || review.ID == id)
+      .Where(review => movie == null || review.MovieID == movie)
+      .Where(review => user == null || review.UserID == user)
+      .Where(review => score == null || review.Score == score)
       .ToList();
 
-    return Task.FromResult<IEnumerable<User>>(result);
+    return Task.FromResult<IEnumerable<Review>>(result);
   }
 
-  public async Task Update(User user)
+  public async Task Update(Review review)
   {
-    int index = users.FindIndex(u => user.ID == u.ID);
+    int index = reviews.FindIndex(u => review.ID == u.ID);
     if (index != -1)
     {
-      users[index] = user;
+      reviews[index] = review;
       await Save();
     }
   }

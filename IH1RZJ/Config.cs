@@ -23,8 +23,9 @@ public class Config
   public string UsersPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "users.json");
   public string PeoplePath { get; set; } = Path.Combine(AppContext.BaseDirectory, "people.json");
   public string MoviesPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "movies.json");
+  public string ReviewsPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "reviews.json");
 
-  public JsonSerializerOptions JsonOptions = new()
+  public static JsonSerializerOptions JsonOptions = new()
   {
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     Converters = { new JsonStringEnumConverter() },

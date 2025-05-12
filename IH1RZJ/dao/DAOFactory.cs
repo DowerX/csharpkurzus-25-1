@@ -26,4 +26,7 @@ public class DAOFactory
 
   private readonly IMovieDAO movieDAO = new MovieJsonDAO(Config.Instance.MoviesPath);
   public IMovieDAO MovieDAO => movieDAO;
+
+  private readonly IReviewDAO reviewDAO = new ReviewJsonDAO(Config.Instance.ReviewsPath);
+  public IReviewDAO ReviewDAO => reviewDAO;
 }

@@ -16,7 +16,7 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
   {
     this.path = path;
     using FileStream stream = File.OpenRead(path);
-    List<PersonJsonDTO>? peopleDTOs = JsonSerializer.Deserialize<List<PersonJsonDTO>>(stream, Config.Instance.JsonOptions);
+    List<PersonJsonDTO>? peopleDTOs = JsonSerializer.Deserialize<List<PersonJsonDTO>>(stream, Config.JsonOptions);
 
     if (peopleDTOs == null)
     {
@@ -40,7 +40,7 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
         .ToList();
 
       await using FileStream stream = File.Create(tempFile);
-      await JsonSerializer.SerializeAsync(stream, dtoList, Config.Instance.JsonOptions);
+      await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
       stream.Close();
 
       File.Move(tempFile, path, true);

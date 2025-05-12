@@ -15,7 +15,7 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
   {
     this.path = path;
     using FileStream stream = File.OpenRead(path);
-    List<MovieJsonDTO>? movieDTOs = JsonSerializer.Deserialize<List<MovieJsonDTO>>(stream, Config.Instance.JsonOptions);
+    List<MovieJsonDTO>? movieDTOs = JsonSerializer.Deserialize<List<MovieJsonDTO>>(stream, Config.JsonOptions);
 
     if (movieDTOs == null)
     {
@@ -39,7 +39,7 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
         .ToList();
 
       await using FileStream stream = File.Create(tempFile);
-      await JsonSerializer.SerializeAsync(stream, dtoList, Config.Instance.JsonOptions);
+      await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
       stream.Close();
 
       File.Move(tempFile, path, true);
