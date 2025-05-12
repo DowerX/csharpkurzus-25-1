@@ -22,6 +22,7 @@ public class PeopleListWindow : Window
     var addButton = new Button
     {
       Text = "Add",
+      Enabled = UserController.CurrentUser?.IsAdmin ?? false
     };
     addButton.Clicked += async () =>
     {

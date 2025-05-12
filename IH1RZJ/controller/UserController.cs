@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 using IH1RZJ.DAO;
 using IH1RZJ.Model;
 
@@ -8,6 +6,8 @@ namespace IH1RZJ.Controller;
 public class UserController
 {
   private readonly IUserDAO dao;
+
+  public static User? CurrentUser { get; private set; }
 
   public UserController(IUserDAO dao)
   {
@@ -46,7 +46,16 @@ public class UserController
     // TODO: hash password
     try
     {
-      return (await dao.List(null, username, null)).Single().PasswordHash == password;
+      User user = (await dao.List(null, username, null)).Single();
+      if (user.PasswordHash == password)
+      {
+        CurrentUser = user;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
     catch (Exception) // didn't find any users with that name
     {
