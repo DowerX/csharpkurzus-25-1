@@ -9,7 +9,9 @@ using Terminal.Gui;
 
 public class MoviesListWindow : Window
 {
-  private readonly MovieController controller = new MovieController(DAOFactory.Instance.MovieDAO);
+  private readonly MovieController controller = new MovieController(
+    DAOFactory.Instance.MovieDAO,
+    DAOFactory.Instance.ReviewDAO);
 
   private IEnumerable<Movie>? data;
   private readonly TableView view;

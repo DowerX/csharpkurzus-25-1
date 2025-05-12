@@ -35,7 +35,7 @@ public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
     {
       var dtoList = reviews
         .AsParallel()
-        .Select(movie => movie.ToDTO())
+        .Select(review => review.ToDTO())
         .ToList();
 
       await using FileStream stream = File.Create(tempFile);

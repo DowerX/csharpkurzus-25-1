@@ -5,19 +5,21 @@ namespace IH1RZJ.Controller;
 
 public class UserController
 {
-  private readonly IUserDAO dao;
+  private readonly IUserDAO userDAO;
+  private readonly IReviewDAO reviewDAO;
 
   public static User? CurrentUser { get; private set; }
 
-  public UserController(IUserDAO dao)
+  public UserController(IUserDAO userDAO, IReviewDAO reviewDAO)
   {
-    this.dao = dao ?? throw new ArgumentNullException(nameof(dao));
+    this.userDAO = userDAO ?? throw new ArgumentNullException(nameof(userDAO));
+    this.reviewDAO = reviewDAO ?? throw new ArgumentNullException(nameof(reviewDAO));
   }
 
   public async Task Create(string username, string password, bool isAdmin)
   {
     // TODO: hash password
-    await dao.Create(new User
+    await userDAO.Create(new User
     {
       Username = username,
       PasswordHash = password,
@@ -27,18 +29,22 @@ public class UserController
 
   public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin)
   {
-    return dao.List(id, username, isAdmin);
+    return userDAO.List(id, username, isAdmin);
   }
 
   public async Task Update(User user)
   {
     // TODO: hash password
-    await dao.Update(user);
+    await userDAO.Update(user);
   }
 
   public async Task Delete(User user)
   {
-    await dao.Delete(user);
+    foreach (Review review in await reviewDAO.List(null, null, user.ID, null))
+    {
+      await reviewDAO.Delete(review);
+    }
+    await userDAO.Delete(user);
   }
 
   public async Task<bool> Login(string username, string password)
@@ -46,7 +52,7 @@ public class UserController
     // TODO: hash password
     try
     {
-      User user = (await dao.List(null, username, null)).Single();
+      User user = (await userDAO.List(null, username, null)).Single();
       if (user.PasswordHash == password)
       {
         CurrentUser = user;
@@ -68,10 +74,10 @@ public class UserController
     if (password != repeatPassword)
       return false;
 
-    if ((await dao.List(null, username, null)).Count() != 0)
+    if ((await userDAO.List(null, username, null)).Count() != 0)
       return false;
 
-    await dao.Create(new User
+    await userDAO.Create(new User
     {
       Username = username,
       PasswordHash = password,

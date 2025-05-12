@@ -5,7 +5,9 @@ using Terminal.Gui;
 
 public class LoginWindow : Window
 {
-  private readonly UserController controller = new UserController(DAOFactory.Instance.UserDAO);
+  private readonly UserController controller = new UserController(
+    DAOFactory.Instance.UserDAO,
+    DAOFactory.Instance.ReviewDAO);
 
   public LoginWindow()
   {

@@ -7,7 +7,9 @@ using Terminal.Gui;
 public class MovieEditWindow : Window
 {
   private readonly Movie movie;
-  private readonly MovieController controller = new MovieController(DAOFactory.Instance.MovieDAO);
+  private readonly MovieController controller = new MovieController(
+    DAOFactory.Instance.MovieDAO,
+    DAOFactory.Instance.ReviewDAO);
 
   public MovieEditWindow(Movie movie)
   {

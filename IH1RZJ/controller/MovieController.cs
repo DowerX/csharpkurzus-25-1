@@ -5,16 +5,18 @@ namespace IH1RZJ.Controller;
 
 public class MovieController
 {
-  private readonly IMovieDAO dao;
+  private readonly IMovieDAO movieDao;
+  private readonly IReviewDAO reviewDAO;
 
-  public MovieController(IMovieDAO dao)
+  public MovieController(IMovieDAO movieDao, IReviewDAO reviewDAO)
   {
-    this.dao = dao ?? throw new ArgumentNullException(nameof(dao));
+    this.movieDao = movieDao ?? throw new ArgumentNullException(nameof(movieDao));
+    this.reviewDAO = reviewDAO ?? throw new ArgumentNullException(nameof(reviewDAO));
   }
 
   public async Task Create(string title, string description, DateTime releaseDate)
   {
-    await dao.Create(new Movie
+    await movieDao.Create(new Movie
     {
       Title = title,
       Description = description,
@@ -24,16 +26,20 @@ public class MovieController
 
   public Task<IEnumerable<Movie>> List(Guid? id, string? title)
   {
-    return dao.List(id, title);
+    return movieDao.List(id, title);
   }
 
   public async Task Update(Movie movie)
   {
-    await dao.Update(movie);
+    await movieDao.Update(movie);
   }
 
   public async Task Delete(Movie movie)
   {
-    await dao.Delete(movie);
+    foreach (Review review in await reviewDAO.List(null, movie.ID, null, null))
+    {
+      await reviewDAO.Delete(review);
+    }
+    await movieDao.Delete(movie);
   }
 }
