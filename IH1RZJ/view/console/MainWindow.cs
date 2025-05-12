@@ -22,7 +22,7 @@ public class MainWindow : Window
       Text = "Movies",
       Y = Pos.Bottom(peopleButton)
     };
-    moviesButton.Clicked += () => Application.Run<Window>();
+    moviesButton.Clicked += () => Application.Run<MoviesListWindow>();
 
     var reviewsButton = new Button
     {

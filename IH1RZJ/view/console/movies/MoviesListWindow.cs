@@ -6,16 +6,16 @@ using IH1RZJ.Model;
 
 using Terminal.Gui;
 
-public class PeopleListWindow : Window
+public class MoviesListWindow : Window
 {
-  private readonly PersonController controller = new PersonController(DAOFactory.Instance.PersonDAO);
+  private readonly MovieController controller = new MovieController(DAOFactory.Instance.MovieDAO);
 
-  private IEnumerable<Person>? data;
+  private IEnumerable<Movie>? data;
   private readonly TableView view;
 
-  public PeopleListWindow()
+  public MoviesListWindow()
   {
-    Title = "People";
+    Title = "Movies";
 
     var addButton = new Button
     {
@@ -23,11 +23,11 @@ public class PeopleListWindow : Window
     };
     addButton.Clicked += async () =>
     {
-      Application.Run(new PersonEditWindow(new Person
+      Application.Run(new MovieEditWindow(new Movie
       {
-        Name = "",
-        Birthday = DateTime.Now,
-        Bio = ""
+        Title = "",
+        Description = "",
+        ReleaseDate = DateTime.Now
       }));
       await update();
     };
@@ -45,7 +45,7 @@ public class PeopleListWindow : Window
       if (data == null) return;
       var item = data.ToList()[args.Row];
 
-      Application.Run(new PersonEditWindow(item));
+      Application.Run(new MovieEditWindow(item));
       await update();
     };
 
@@ -57,50 +57,43 @@ public class PeopleListWindow : Window
   private async Task update()
   {
     data = await controller.List(null, null);
-    view.Table = new PeopleTable(data);
+    view.Table = new MoviesTable(data);
     view.Update();
     view.Redraw(Rect.Empty);
   }
 
-  class PeopleTable : DataTable
+  class MoviesTable : DataTable
   {
-    public PeopleTable(IEnumerable<Person> people)
+    public MoviesTable(IEnumerable<Movie> movies)
     {
       // setup schema
       DataColumn column;
 
       column = new DataColumn();
       column.DataType = typeof(string);
-      column.ColumnName = "Name";
+      column.ColumnName = "Title";
       column.ReadOnly = false;
       Columns.Add(column);
 
       column = new DataColumn();
       column.DataType = typeof(string);
-      column.ColumnName = "Birthday";
+      column.ColumnName = "Description";
       column.ReadOnly = false;
       Columns.Add(column);
 
       column = new DataColumn();
       column.DataType = typeof(string);
-      column.ColumnName = "Death";
-      column.ReadOnly = false;
-      Columns.Add(column);
-
-      column = new DataColumn();
-      column.DataType = typeof(string);
-      column.ColumnName = "Bio";
+      column.ColumnName = "Release date";
       column.ReadOnly = false;
       Columns.Add(column);
 
       // populate rows
-      foreach (var person in people)
+      foreach (var movie in movies)
       {
         DataRow row = NewRow();
-        row["Name"] = person.Name;
-        row["Birthday"] = person.Birthday.ToString("yyyy/MM/dd");
-        row["Death"] = person.Death?.ToString("yyyy/MM/dd") ?? "-";
-        row["Bio"] = person.Bio;
+        row["Title"] = movie.Title;
+        row["Description"] = movie.Description;
+        row["Release date"] = movie.ReleaseDate.ToString("yyyy/MM/dd");
         Rows.Add(row);
       }
     }
