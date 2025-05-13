@@ -102,6 +102,7 @@ public class MovieController
 
   public async Task<float> GetUserScore(Guid moive, Guid user)
   {
-    return (await reviewDAO.List(null, moive, user, null)).Single().Score;
+    var reviews = await reviewDAO.List(null, moive, user, null);
+    return reviews.Any() ? reviews.Single().Score : 0;
   }
 }
