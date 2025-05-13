@@ -24,6 +24,7 @@ public class Config
   public string PeoplePath { get; set; } = Path.Combine(AppContext.BaseDirectory, "people.json");
   public string MoviesPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "movies.json");
   public string ReviewsPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "reviews.json");
+  public string AppearancesPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "appearances.json");
 
   public static JsonSerializerOptions JsonOptions = new()
   {

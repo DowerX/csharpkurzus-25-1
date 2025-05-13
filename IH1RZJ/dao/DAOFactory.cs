@@ -29,4 +29,7 @@ public class DAOFactory
 
   private readonly IReviewDAO reviewDAO = new ReviewJsonDAO(Config.Instance.ReviewsPath);
   public IReviewDAO ReviewDAO => reviewDAO;
+
+  private readonly IAppearanceDAO appearanceDAO = new AppearanceJsonDAO(Config.Instance.AppearancesPath);
+  public IAppearanceDAO AppearanceDAO => appearanceDAO;
 }

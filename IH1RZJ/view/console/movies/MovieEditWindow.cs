@@ -9,7 +9,9 @@ public class MovieEditWindow : Window
   private readonly Movie movie;
   private readonly MovieController controller = new MovieController(
     DAOFactory.Instance.MovieDAO,
-    DAOFactory.Instance.ReviewDAO);
+    DAOFactory.Instance.ReviewDAO,
+    DAOFactory.Instance.PersonDAO,
+    DAOFactory.Instance.AppearanceDAO);
 
   public MovieEditWindow(Movie movie)
   {

@@ -7,4 +7,5 @@ public record class Person
   public required DateTime Birthday { get; set; }
   public DateTime? Death { get; set; }
   public required string Bio { get; set; }
+  public Role Role { get; set; } = Role.Actor;
 }

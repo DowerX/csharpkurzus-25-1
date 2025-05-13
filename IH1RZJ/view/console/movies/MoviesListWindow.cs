@@ -11,7 +11,9 @@ public class MoviesListWindow : Window
 {
   private readonly MovieController controller = new MovieController(
     DAOFactory.Instance.MovieDAO,
-    DAOFactory.Instance.ReviewDAO);
+    DAOFactory.Instance.ReviewDAO,
+    DAOFactory.Instance.PersonDAO,
+    DAOFactory.Instance.AppearanceDAO);
 
   private IEnumerable<Movie>? data;
   private readonly TableView view;
@@ -82,14 +84,22 @@ public class MoviesListWindow : Window
     view.CellActivationKey = Key.Enter;
     view.CellActivated += async args =>
     {
-      if (!(UserController.CurrentUser?.IsAdmin ?? false)) return;
       if (data == null) return;
       var item = data.ToList()[args.Row];
 
-      Application.Run(new MovieEditWindow(item));
-      await Update();
-      Sort();
-      Display();
+      if (UserController.CurrentUser?.IsAdmin ?? false)
+      {
+        // admins edit
+        Application.Run(new MovieEditWindow(item));
+        await Update();
+        Sort();
+        Display();
+      }
+      else
+      {
+        // users view details
+        Application.Run(new MovieDetailsWindow(item));
+      }
     };
 
     Add(addButton, sortButton,

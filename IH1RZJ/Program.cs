@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using IH1RZJ.Controller;
+﻿using IH1RZJ.Controller;
 using IH1RZJ.DAO;
 
 using Microsoft.Extensions.Configuration;
@@ -27,7 +25,11 @@ internal class Program
       Console.Error.WriteLine(e.Message);
       return;
     }
-    var movieCotroller = new MovieController(DAOFactory.Instance.MovieDAO, DAOFactory.Instance.ReviewDAO);
+    var movieCotroller = new MovieController(
+      DAOFactory.Instance.MovieDAO,
+      DAOFactory.Instance.ReviewDAO,
+      DAOFactory.Instance.PersonDAO,
+      DAOFactory.Instance.AppearanceDAO);
     var personController = new PersonController(DAOFactory.Instance.PersonDAO);
     var reviewController = new ReviewController(DAOFactory.Instance.ReviewDAO);
     var userCotroller = new UserController(DAOFactory.Instance.UserDAO, DAOFactory.Instance.ReviewDAO);
