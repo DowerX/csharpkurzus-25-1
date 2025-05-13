@@ -8,8 +8,8 @@ namespace IH1RZJ.DAO.Json;
 
 public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
 {
-  private List<Movie> movies;
-  private string path;
+  private readonly List<Movie> movies;
+  private readonly string path;
 
   public MovieJsonDAO(string path)
   {

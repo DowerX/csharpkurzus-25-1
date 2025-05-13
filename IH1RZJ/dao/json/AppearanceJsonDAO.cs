@@ -8,8 +8,8 @@ namespace IH1RZJ.DAO.Json;
 
 public class AppearanceJsonDAO : IAppearanceDAO, IAsyncDisposable
 {
-  private List<Appearance> appearances;
-  private string path;
+  private readonly List<Appearance> appearances;
+  private readonly string path;
 
   public AppearanceJsonDAO(string path)
   {

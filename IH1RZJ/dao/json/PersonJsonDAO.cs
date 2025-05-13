@@ -9,8 +9,8 @@ namespace IH1RZJ.DAO.Json;
 
 public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
 {
-  private List<Person> people;
-  private string path;
+  private readonly List<Person> people;
+  private readonly string path;
 
   public PersonJsonDAO(string path)
   {

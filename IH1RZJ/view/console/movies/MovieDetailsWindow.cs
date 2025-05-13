@@ -76,7 +76,7 @@ public class MovieDetailsWindow : Window
       {
         try
         {
-          await controller.LeaveReview(movie.ID, UserController.CurrentUser.ID, score);
+          await controller.LeaveReview(movie.ID, UserController.CurrentUser!.ID, score);
         }
         catch (Exception ex)
         {
@@ -169,7 +169,7 @@ public class MovieDetailsWindow : Window
     try
     {
       data = await controller.GetCast(movie.ID);
-      yourScoreField.Text = (await controller.GetUserScore(movie.ID, UserController.CurrentUser.ID)).ToString();
+      yourScoreField.Text = (await controller.GetUserScore(movie.ID, UserController.CurrentUser!.ID)).ToString();
     }
     catch (Exception ex)
     {

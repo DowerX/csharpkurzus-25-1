@@ -23,7 +23,7 @@ public class PersonEditWindow : Window
     };
     var nameField = new TextField
     {
-      Text = person.Name,
+      Text = this.person.Name,
       X = Pos.Right(nameLabel),
       Width = Dim.Fill()
     };
@@ -35,7 +35,7 @@ public class PersonEditWindow : Window
     };
     var birthdayField = new TextField
     {
-      Text = person.Birthday.ToString("yyyy/MM/dd"),
+      Text = this.person.Birthday.ToString("yyyy/MM/dd"),
       X = Pos.Right(birthdayLabel),
       Y = Pos.Bottom(nameField),
       Width = Dim.Fill()
@@ -48,7 +48,7 @@ public class PersonEditWindow : Window
     };
     var deathField = new TextField
     {
-      Text = person.Death?.ToString("yyyy/MM/dd") ?? "",
+      Text = this.person.Death?.ToString("yyyy/MM/dd") ?? "",
       X = Pos.Right(deathLabel),
       Y = Pos.Bottom(birthdayField),
       Width = Dim.Fill()
@@ -61,7 +61,7 @@ public class PersonEditWindow : Window
     };
     var bioField = new TextField
     {
-      Text = person.Bio,
+      Text = this.person.Bio,
       X = Pos.Right(bioLabel),
       Y = Pos.Bottom(deathField),
       Width = Dim.Fill()
@@ -75,7 +75,7 @@ public class PersonEditWindow : Window
     };
     okButton.Clicked += async () =>
     {
-      person.Name = (string)nameField.Text;
+      this.person.Name = (string)nameField.Text;
 
       if (DateTime.TryParseExact(
         (string)birthdayField.Text,
@@ -83,7 +83,7 @@ public class PersonEditWindow : Window
         System.Globalization.DateTimeStyles.None,
         out DateTime parsedBirthday))
       {
-        person.Birthday = parsedBirthday;
+        this.person.Birthday = parsedBirthday;
       }
       else
       {
@@ -101,7 +101,7 @@ public class PersonEditWindow : Window
         System.Globalization.DateTimeStyles.None,
         out DateTime parsedDeath))
       {
-        person.Death = parsedDeath;
+        this.person.Death = parsedDeath;
       }
       else
       {
@@ -109,17 +109,17 @@ public class PersonEditWindow : Window
         return;
       }
 
-      person.Bio = (string)bioField.Text;
+      this.person.Bio = (string)bioField.Text;
 
       try
       {
-        if (!(await controller.List(person.ID, null)).Any())
+        if (!(await controller.List(this.person.ID, null)).Any())
         {
-          await controller.Create(person.Name, person.Birthday, person.Death, person.Bio);
+          await controller.Create(this.person.Name, this.person.Birthday, this.person.Death, this.person.Bio);
         }
         else
         {
-          await controller.Update(person);
+          await controller.Update(this.person);
         }
       }
       catch (Exception ex)

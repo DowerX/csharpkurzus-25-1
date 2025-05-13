@@ -8,8 +8,8 @@ namespace IH1RZJ.DAO.Json;
 
 public class UserJsonDAO : IUserDAO, IAsyncDisposable
 {
-  private List<User> users;
-  private string path;
+  private readonly List<User> users;
+  private readonly string path;
 
   public UserJsonDAO(string path)
   {

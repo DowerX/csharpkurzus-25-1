@@ -8,8 +8,8 @@ namespace IH1RZJ.DAO.Json;
 
 public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
 {
-  private List<Review> reviews;
-  private string path;
+  private readonly List<Review> reviews;
+  private readonly string path;
 
   public ReviewJsonDAO(string path)
   {
