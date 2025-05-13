@@ -5,10 +5,6 @@ using Terminal.Gui;
 
 public class MainWindow : Window
 {
-  private readonly UserController controller = new UserController(
-    DAOFactory.Instance.UserDAO,
-    DAOFactory.Instance.ReviewDAO);
-
   public MainWindow()
   {
     Title = "Movie manager";
@@ -26,20 +22,13 @@ public class MainWindow : Window
     };
     moviesButton.Clicked += () => Application.Run<MoviesListWindow>();
 
-    var reviewsButton = new Button
-    {
-      Text = "Reviews",
-      Y = Pos.Bottom(moviesButton)
-    };
-    reviewsButton.Clicked += () => Application.Run<Window>();
-
     var logoutButton = new Button
     {
       Text = "Logout",
-      Y = Pos.Bottom(reviewsButton)
+      Y = Pos.Bottom(moviesButton)
     };
     logoutButton.Clicked += () => Application.RequestStop();
 
-    Add(peopleButton, moviesButton, reviewsButton, logoutButton);
+    Add(peopleButton, moviesButton, logoutButton);
   }
 }

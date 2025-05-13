@@ -25,7 +25,7 @@ public class MovieEditWindow : Window
     };
     var titleField = new TextField
     {
-      Text = movie.Title,
+      Text = this.movie.Title,
       X = Pos.Right(titleLabel),
       Width = Dim.Fill()
     };
@@ -37,7 +37,7 @@ public class MovieEditWindow : Window
     };
     var descriptionField = new TextField
     {
-      Text = movie.Description,
+      Text = this.movie.Description,
       X = Pos.Right(descriptionLabel),
       Y = Pos.Bottom(titleField),
       Width = Dim.Fill()
@@ -50,7 +50,7 @@ public class MovieEditWindow : Window
     };
     var releaseDateField = new TextField
     {
-      Text = movie.ReleaseDate.ToString("yyyy/MM/dd") ?? "",
+      Text = this.movie.ReleaseDate.ToString("yyyy/MM/dd") ?? "",
       X = Pos.Right(releaseDateLabel),
       Y = Pos.Bottom(descriptionField),
       Width = Dim.Fill()
@@ -65,7 +65,7 @@ public class MovieEditWindow : Window
     };
     okButton.Clicked += async () =>
     {
-      movie.Title = (string)titleField.Text;
+      this.movie.Title = (string)titleField.Text;
 
       if (DateTime.TryParseExact(
         (string)releaseDateField.Text,
@@ -73,23 +73,23 @@ public class MovieEditWindow : Window
         System.Globalization.DateTimeStyles.None,
         out DateTime parsedReleasDate))
       {
-        movie.ReleaseDate = parsedReleasDate;
+        this.movie.ReleaseDate = parsedReleasDate;
       }
       else
       {
-        MessageBox.ErrorQuery("Releas date", "Failed to parse date", "OK");
+        MessageBox.ErrorQuery("Release date", "Failed to parse date", "OK");
         return;
       }
 
-      movie.Description = (string)movie.Description;
+      this.movie.Description = (string)descriptionField.Text;
 
-      if ((await controller.List(movie.ID, null)).Count() == 0)
+      if (!(await controller.List(movie.ID, null)).Any())
       {
-        await controller.Create(movie.Title, movie.Description, movie.ReleaseDate);
+        await controller.Create(this.movie.Title, this.movie.Description, this.movie.ReleaseDate);
       }
       else
       {
-        await controller.Update(movie);
+        await controller.Update(this.movie);
       }
 
       Application.RequestStop();
@@ -103,7 +103,7 @@ public class MovieEditWindow : Window
     };
     deleteButton.Clicked += async () =>
     {
-      await controller.Delete(movie);
+      await controller.Delete(this.movie);
       Application.RequestStop();
     };
 

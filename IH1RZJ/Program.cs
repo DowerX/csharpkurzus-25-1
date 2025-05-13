@@ -25,22 +25,18 @@ internal class Program
       Console.Error.WriteLine(e.Message);
       return;
     }
+
     var movieCotroller = new MovieController(
       DAOFactory.Instance.MovieDAO,
       DAOFactory.Instance.ReviewDAO,
       DAOFactory.Instance.PersonDAO,
       DAOFactory.Instance.AppearanceDAO);
+    var userCotroller = new UserController(
+      DAOFactory.Instance.UserDAO,
+      DAOFactory.Instance.ReviewDAO);
     var personController = new PersonController(DAOFactory.Instance.PersonDAO);
-    var reviewController = new ReviewController(DAOFactory.Instance.ReviewDAO);
-    var userCotroller = new UserController(DAOFactory.Instance.UserDAO, DAOFactory.Instance.ReviewDAO);
 
     // await movieCotroller.Create("A Minecraft Movie", "gaming", DateTime.UtcNow);
-
-    await reviewController.Create(
-        (await movieCotroller.List(null, null)).First().ID,
-        (await userCotroller.List(null, null, null)).First().ID,
-        9
-    );
 
     // interface
     Application.QuitKey = Key.Esc;

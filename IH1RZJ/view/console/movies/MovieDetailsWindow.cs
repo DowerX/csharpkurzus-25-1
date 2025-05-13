@@ -18,6 +18,7 @@ public class MovieDetailsWindow : Window
   private IEnumerable<Person>? data;
   private readonly Movie movie;
   private readonly TableView view;
+  private readonly TextField yourScoreField;
   private bool descending = false;
 
   public MovieDetailsWindow(Movie movie)
@@ -46,6 +47,37 @@ public class MovieDetailsWindow : Window
     {
       Text = $"Score: {movie.Score}",
       Y = Pos.Bottom(descriptionLabel)
+    };
+
+    var yourScoreLabel = new Label
+    {
+      Text = $"Your score:",
+      X = Pos.Right(scoreLabel) + 1,
+      Y = Pos.Bottom(descriptionLabel)
+    };
+    yourScoreField = new TextField
+    {
+      Width = 10,
+      X = Pos.Right(yourScoreLabel),
+      Y = Pos.Bottom(descriptionLabel)
+    };
+    var yourScoreButton = new Button
+    {
+      Text = "Set",
+      X = Pos.Right(yourScoreField) + 1,
+      Y = Pos.Bottom(descriptionLabel)
+    };
+    yourScoreButton.Clicked += async () =>
+    {
+      float score;
+      if (float.TryParse((string)yourScoreField.Text, out score))
+      {
+        await controller.LeaveReview(movie.ID, UserController.CurrentUser.ID, score);
+      }
+      else
+      {
+        MessageBox.ErrorQuery("Leave review", "Failed to parse score.", "OK");
+      }
     };
 
     var sortButton = new Button
@@ -93,7 +125,7 @@ public class MovieDetailsWindow : Window
     Add(titleLabel,
       releaseDateLabel,
       descriptionLabel,
-      scoreLabel,
+      scoreLabel, yourScoreLabel, yourScoreField, yourScoreButton,
       sortButton, searchButton, searchField,
       view);
 
@@ -126,6 +158,7 @@ public class MovieDetailsWindow : Window
   private async Task Update()
   {
     data = await controller.GetCast(movie.ID);
+    yourScoreField.Text = (await controller.GetUserScore(movie.ID, UserController.CurrentUser.ID)).ToString();
   }
 
   class PeopleTable : DataTable

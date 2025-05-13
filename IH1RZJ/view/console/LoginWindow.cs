@@ -63,10 +63,7 @@ public class LoginWindow : Window
       Y = Pos.Bottom(loginButton),
       X = Pos.Center(),
     };
-    backButton.Clicked += () =>
-    {
-      Application.RequestStop();
-    };
+    backButton.Clicked += () => Application.RequestStop();
 
     Add(usernameLabel, usernameField,
       passwordLabel, passwordField,

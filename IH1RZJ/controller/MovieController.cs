@@ -73,4 +73,35 @@ public class MovieController
 
     return cast;
   }
+
+  public async Task LeaveReview(Guid movie, Guid user, float score)
+  {
+    if (score < 0 || score > 10)
+    {
+      throw new ArgumentOutOfRangeException(nameof(score), "Score must be between 0 and 10.");
+    }
+
+    Review review;
+    try
+    {
+      review = (await reviewDAO.List(null, movie, user, null)).Single();
+      review.Score = score;
+      await reviewDAO.Update(review);
+    }
+    catch (InvalidOperationException)
+    {
+      review = new Review
+      {
+        MovieID = movie,
+        UserID = user,
+        Score = score
+      };
+      await reviewDAO.Create(review);
+    }
+  }
+
+  public async Task<float> GetUserScore(Guid moive, Guid user)
+  {
+    return (await reviewDAO.List(null, moive, user, null)).Single().Score;
+  }
 }
