@@ -82,6 +82,7 @@ public class MoviesListWindow : Window
     view.CellActivationKey = Key.Enter;
     view.CellActivated += async args =>
     {
+      if (!(UserController.CurrentUser?.IsAdmin ?? false)) return;
       if (data == null) return;
       var item = data.ToList()[args.Row];
 
