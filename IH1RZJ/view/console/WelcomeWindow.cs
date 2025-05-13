@@ -1,5 +1,7 @@
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class WelcomeWindow : Window
 {
   public WelcomeWindow()

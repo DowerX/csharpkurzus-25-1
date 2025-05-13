@@ -19,7 +19,7 @@ public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
 
     if (reviewDTOs == null)
     {
-      throw new Exception("Failed to load users!");
+      throw new Exception("Failed to load reviews!");
     }
 
     reviews = reviewDTOs

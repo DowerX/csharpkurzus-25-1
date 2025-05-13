@@ -1,5 +1,6 @@
 ﻿using IH1RZJ.Controller;
 using IH1RZJ.DAO;
+using IH1RZJ.View.Console;
 
 using Microsoft.Extensions.Configuration;
 

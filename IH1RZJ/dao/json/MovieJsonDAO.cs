@@ -19,7 +19,7 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
 
     if (movieDTOs == null)
     {
-      throw new Exception("Failed to load users!");
+      throw new Exception("Failed to load movies!");
     }
 
     movies = movieDTOs

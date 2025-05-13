@@ -4,6 +4,8 @@ using IH1RZJ.Model;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class PersonEditWindow : Window
 {
   private readonly Person person;
@@ -109,13 +111,20 @@ public class PersonEditWindow : Window
 
       person.Bio = (string)bioField.Text;
 
-      if ((await controller.List(person.ID, null)).Count() == 0)
+      try
       {
-        await controller.Create(person.Name, person.Birthday, person.Death, person.Bio);
+        if (!(await controller.List(person.ID, null)).Any())
+        {
+          await controller.Create(person.Name, person.Birthday, person.Death, person.Bio);
+        }
+        else
+        {
+          await controller.Update(person);
+        }
       }
-      else
+      catch (Exception ex)
       {
-        await controller.Update(person);
+        MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
       }
 
       Application.RequestStop();

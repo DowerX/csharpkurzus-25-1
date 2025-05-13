@@ -1,7 +1,6 @@
-using IH1RZJ.Controller;
-using IH1RZJ.DAO;
-
 using Terminal.Gui;
+
+namespace IH1RZJ.View.Console;
 
 public class MainWindow : Window
 {

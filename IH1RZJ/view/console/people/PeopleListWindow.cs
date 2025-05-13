@@ -7,6 +7,8 @@ using IH1RZJ.Utils;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class PeopleListWindow : Window
 {
   private readonly PersonController controller = new PersonController(DAOFactory.Instance.PersonDAO);
@@ -121,7 +123,14 @@ public class PeopleListWindow : Window
 
   private async Task Update()
   {
-    data = await controller.List(null, null);
+    try
+    {
+      data = await controller.List(null, null);
+    }
+    catch (Exception ex)
+    {
+      MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
+    }
   }
 
   class PeopleTable : DataTable

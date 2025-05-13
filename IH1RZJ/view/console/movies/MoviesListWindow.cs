@@ -7,6 +7,8 @@ using IH1RZJ.Utils;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class MoviesListWindow : Window
 {
   private readonly MovieController controller = new MovieController(
@@ -134,7 +136,14 @@ public class MoviesListWindow : Window
 
   private async Task Update()
   {
-    data = await controller.List(null, null);
+    try
+    {
+      data = await controller.List(null, null);
+    }
+    catch (Exception ex)
+    {
+      MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
+    }
   }
 
   class MoviesTable : DataTable

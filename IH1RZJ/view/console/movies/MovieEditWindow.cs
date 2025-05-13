@@ -4,6 +4,8 @@ using IH1RZJ.Model;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class MovieEditWindow : Window
 {
   private readonly Movie movie;
@@ -83,13 +85,20 @@ public class MovieEditWindow : Window
 
       this.movie.Description = (string)descriptionField.Text;
 
-      if (!(await controller.List(movie.ID, null)).Any())
+      try
       {
-        await controller.Create(this.movie.Title, this.movie.Description, this.movie.ReleaseDate);
+        if (!(await controller.List(movie.ID, null)).Any())
+        {
+          await controller.Create(this.movie.Title, this.movie.Description, this.movie.ReleaseDate);
+        }
+        else
+        {
+          await controller.Update(this.movie);
+        }
       }
-      else
+      catch (Exception ex)
       {
-        await controller.Update(this.movie);
+        MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
       }
 
       Application.RequestStop();
@@ -103,7 +112,15 @@ public class MovieEditWindow : Window
     };
     deleteButton.Clicked += async () =>
     {
-      await controller.Delete(this.movie);
+      try
+      {
+        await controller.Delete(this.movie);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
+      }
+
       Application.RequestStop();
     };
 

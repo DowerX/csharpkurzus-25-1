@@ -7,6 +7,8 @@ using IH1RZJ.Utils;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class MovieDetailsWindow : Window
 {
   private readonly MovieController controller = new MovieController(
@@ -72,7 +74,14 @@ public class MovieDetailsWindow : Window
       float score;
       if (float.TryParse((string)yourScoreField.Text, out score))
       {
-        await controller.LeaveReview(movie.ID, UserController.CurrentUser.ID, score);
+        try
+        {
+          await controller.LeaveReview(movie.ID, UserController.CurrentUser.ID, score);
+        }
+        catch (Exception ex)
+        {
+          MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
+        }
       }
       else
       {
@@ -157,8 +166,15 @@ public class MovieDetailsWindow : Window
 
   private async Task Update()
   {
-    data = await controller.GetCast(movie.ID);
-    yourScoreField.Text = (await controller.GetUserScore(movie.ID, UserController.CurrentUser.ID)).ToString();
+    try
+    {
+      data = await controller.GetCast(movie.ID);
+      yourScoreField.Text = (await controller.GetUserScore(movie.ID, UserController.CurrentUser.ID)).ToString();
+    }
+    catch (Exception ex)
+    {
+      MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
+    }
   }
 
   class PeopleTable : DataTable

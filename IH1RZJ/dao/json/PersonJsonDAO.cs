@@ -20,7 +20,7 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
 
     if (peopleDTOs == null)
     {
-      throw new Exception("Failed to load users!");
+      throw new Exception("Failed to load people!");
     }
 
     people = peopleDTOs

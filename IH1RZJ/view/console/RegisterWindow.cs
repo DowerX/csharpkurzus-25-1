@@ -3,6 +3,8 @@ using IH1RZJ.DAO;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class RegisterWindow : Window
 {
   private readonly UserController controller = new UserController(
@@ -57,16 +59,20 @@ public class RegisterWindow : Window
     };
     registerButton.Clicked += async () =>
     {
-      if (await controller.Register(
-        usernameField.Text?.ToString() ?? string.Empty,
-        passwordField.Text?.ToString() ?? string.Empty,
-        passwordRepeatField.Text?.ToString() ?? string.Empty))
-      {
-        MessageBox.Query("Register", "Register Succesful", "Ok");
-      }
-      else
-      {
-        MessageBox.ErrorQuery("Register", "Incorrect username or password", "Ok");
+      try {
+        if (await controller.Register(
+          usernameField.Text?.ToString() ?? string.Empty,
+          passwordField.Text?.ToString() ?? string.Empty,
+          passwordRepeatField.Text?.ToString() ?? string.Empty))
+        {
+          MessageBox.Query("Register", "Register Succesful", "Ok");
+        }
+        else
+        {
+          MessageBox.ErrorQuery("Register", "Incorrect username or password", "Ok");
+        }
+      } catch (Exception ex) {
+        MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
       }
     };
 
@@ -76,10 +82,7 @@ public class RegisterWindow : Window
       Y = Pos.Bottom(registerButton),
       X = Pos.Center(),
     };
-    backButton.Clicked += () =>
-    {
-      Application.RequestStop();
-    };
+    backButton.Clicked += () => Application.RequestStop();
 
     Add(usernameLabel, usernameField,
       passwordLabel, passwordField,

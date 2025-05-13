@@ -3,6 +3,8 @@ using IH1RZJ.DAO;
 
 using Terminal.Gui;
 
+namespace IH1RZJ.View.Console;
+
 public class LoginWindow : Window
 {
   private readonly UserController controller = new UserController(
@@ -44,16 +46,22 @@ public class LoginWindow : Window
     };
     loginButton.Clicked += async () =>
     {
-      if (await controller.Login(
-        (string)usernameField.Text,
-        (string)passwordField.Text))
+      try
       {
-        // MessageBox.Query("Logging In", "Login Succesful", "Ok");
-        Application.Run<MainWindow>();
+        if (await controller.Login(
+          (string)usernameField.Text,
+          (string)passwordField.Text))
+        {
+          Application.Run<MainWindow>();
+        }
+        else
+        {
+          MessageBox.ErrorQuery("Logging In", "Incorrect username or password", "Ok");
+        }
       }
-      else
+      catch (Exception ex)
       {
-        MessageBox.ErrorQuery("Logging In", "Incorrect username or password", "Ok");
+        MessageBox.ErrorQuery("Error", $"An error occurred: {ex.Message}", "Ok");
       }
     };
 
