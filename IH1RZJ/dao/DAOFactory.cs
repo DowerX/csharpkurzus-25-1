@@ -18,6 +18,8 @@ public class DAOFactory
   }
   private DAOFactory() { }
 
+  public static DAOFactory GetInstance() => Instance;
+
   private readonly IUserDAO userDAO = new UserJsonDAO(Config.Instance.UsersPath);
   public IUserDAO UserDAO => userDAO;
 

@@ -93,15 +93,16 @@ public class MoviesListWindow : Window
       {
         // admins edit
         Application.Run(new MovieEditWindow(item));
-        await Update();
-        Sort();
-        Display();
       }
       else
       {
         // users view details
         Application.Run(new MovieDetailsWindow(item));
       }
+
+      await Update();
+      Sort();
+      Display();
     };
 
     Add(addButton, sortButton,
