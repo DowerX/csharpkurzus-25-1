@@ -10,6 +10,7 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
 {
   private readonly List<Movie> movies;
   private readonly string path;
+  private readonly Lock lockObj = new();
 
   public MovieJsonDAO(string path)
   {
@@ -33,11 +34,14 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = movies
-        .AsParallel()
-        .Select(movie => movie.ToDTO())
-        .ToList();
-
+      List<MovieJsonDTO> dtoList;
+      lock (lockObj)
+      {
+        dtoList = movies
+          .AsParallel()
+          .Select(movie => movie.ToDTO())
+          .ToList();
+      }
       await using FileStream stream = File.Create(tempFile);
       await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
       stream.Close();
@@ -57,33 +61,49 @@ public class MovieJsonDAO : IMovieDAO, IAsyncDisposable
 
   public async Task Create(Movie movie)
   {
-    movies.Add(movie);
+    lock (lockObj)
+    {
+      movies.Add(movie);
+    }
     await Save();
   }
 
   public Task<IEnumerable<Movie>> List(Guid? id, string? title)
   {
-    var result = movies
-      .Where(movie => id == null || movie.ID == id)
-      .Where(movie => title == null || movie.Title == title)
-      .ToList();
+    List<Movie> result;
+
+    lock (lockObj)
+    {
+      result = movies
+        .Where(movie => id == null || movie.ID == id)
+        .Where(movie => title == null || movie.Title == title)
+        .ToList();
+    }
 
     return Task.FromResult<IEnumerable<Movie>>(result);
   }
 
   public async Task Update(Movie movie)
   {
-    int index = movies.FindIndex(u => movie.ID == u.ID);
-    if (index != -1)
+    int index = -1;
+    lock (lockObj)
     {
-      movies[index] = movie;
-      await Save();
+      index = movies.FindIndex(u => movie.ID == u.ID);
+      if (index != -1)
+      {
+        movies[index] = movie;
+      }
     }
+    
+    if (index != -1) await Save();
   }
 
   public async Task Delete(Movie movie)
   {
-    movies.Remove(movie);
+    lock (lockObj)
+    {
+      movies.Remove(movie);
+    }
     await Save();
   }
 }

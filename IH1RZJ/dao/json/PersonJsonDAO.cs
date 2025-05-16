@@ -11,6 +11,7 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
 {
   private readonly List<Person> people;
   private readonly string path;
+  private readonly Lock lockObj = new();
 
   public PersonJsonDAO(string path)
   {
@@ -34,11 +35,14 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = people
+      List<PersonJsonDTO> dtoList;
+      lock (lockObj)
+      {
+        dtoList = people
         .AsParallel()
         .Select(person => person.ToDTO())
         .ToList();
-
+      }
       await using FileStream stream = File.Create(tempFile);
       await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
       stream.Close();
@@ -58,34 +62,48 @@ public class PersonJsonDAO : IPersonDAO, IAsyncDisposable
 
   public async Task Create(Person person)
   {
-    people.Add(person);
+    lock (lockObj)
+    {
+      people.Add(person);
+    }
     await Save();
   }
 
   public async Task Delete(Person person)
   {
-    people.Remove(person);
+    lock (lockObj)
+    {
+      people.Remove(person);
+    }
     await Save();
   }
 
   public Task<IEnumerable<Person>> List(Guid? id, string? name)
   {
-    var result = people
+    List<Person> result;
+    lock (lockObj)
+    {
+      result = people
       .AsParallel()
       .Where(person => id == null || person.ID == id)
       .Where(person => name == null || person.Name == name)
       .ToList();
-
+    }
     return Task.FromResult<IEnumerable<Person>>(result);
   }
 
   public async Task Update(Person person)
   {
-    int index = people.FindIndex(p => person.ID == p.ID);
-    if (index != -1)
+    int index = -1;
+    lock (lockObj)
     {
-      people[index] = person;
-      await Save();
+      index = people.FindIndex(p => person.ID == p.ID);
+      if (index != -1)
+      {
+        people[index] = person;
+      }
     }
+
+    if (index != -1) await Save();
   }
 }

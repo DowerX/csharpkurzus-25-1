@@ -10,6 +10,7 @@ public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
 {
   private readonly List<Review> reviews;
   private readonly string path;
+  private readonly Lock lockObj = new();
 
   public ReviewJsonDAO(string path)
   {
@@ -33,10 +34,14 @@ public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = reviews
+      List<ReviewJsonDTO> dtoList;
+      lock (lockObj)
+      {
+        dtoList = reviews
         .AsParallel()
         .Select(review => review.ToDTO())
         .ToList();
+      }
 
       await using FileStream stream = File.Create(tempFile);
       await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
@@ -57,36 +62,51 @@ public class ReviewJsonDAO : IReviewDAO, IAsyncDisposable
 
   public async Task Create(Review review)
   {
-    reviews.Add(review);
+    lock (lockObj)
+    {
+      reviews.Add(review);
+    }
     await Save();
   }
 
   public async Task Delete(Review review)
   {
-    reviews.Remove(review);
+    lock (lockObj)
+    {
+      reviews.Remove(review);
+    }
     await Save();
   }
 
   public Task<IEnumerable<Review>> List(Guid? id, Guid? movie, Guid? user, float? score)
   {
-    var result = reviews
-      .AsParallel()
-      .Where(review => id == null || review.ID == id)
-      .Where(review => movie == null || review.MovieID == movie)
-      .Where(review => user == null || review.UserID == user)
-      .Where(review => score == null || review.Score == score)
-      .ToList();
+    List<Review> result;
+    lock (lockObj)
+    {
+      result = reviews
+        .AsParallel()
+        .Where(review => id == null || review.ID == id)
+        .Where(review => movie == null || review.MovieID == movie)
+        .Where(review => user == null || review.UserID == user)
+        .Where(review => score == null || review.Score == score)
+        .ToList();
+    }
 
     return Task.FromResult<IEnumerable<Review>>(result);
   }
 
   public async Task Update(Review review)
   {
-    int index = reviews.FindIndex(u => review.ID == u.ID);
-    if (index != -1)
+    int index = -1;
+    lock (lockObj)
     {
-      reviews[index] = review;
-      await Save();
+      index = reviews.FindIndex(u => review.ID == u.ID);
+      if (index != -1)
+      {
+        reviews[index] = review;
+      }
     }
+
+    if (index != -1) await Save();
   }
 }

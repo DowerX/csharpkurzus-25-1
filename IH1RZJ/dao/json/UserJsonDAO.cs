@@ -10,6 +10,7 @@ public class UserJsonDAO : IUserDAO, IAsyncDisposable
 {
   private readonly List<User> users;
   private readonly string path;
+  private readonly Lock lockObj = new();
 
   public UserJsonDAO(string path)
   {
@@ -33,10 +34,14 @@ public class UserJsonDAO : IUserDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = users
-        .AsParallel()
-        .Select(movie => movie.ToDTO())
-        .ToList();
+      List<UserJsonDTO> dtoList;
+      lock (lockObj)
+      {
+        dtoList = users
+          .AsParallel()
+          .Select(movie => movie.ToDTO())
+          .ToList();
+      }
 
       await using FileStream stream = File.Create(tempFile);
       await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
@@ -57,35 +62,50 @@ public class UserJsonDAO : IUserDAO, IAsyncDisposable
 
   public async Task Create(User user)
   {
-    users.Add(user);
+    lock (lockObj)
+    {
+      users.Add(user);
+    }
     await Save();
   }
 
   public async Task Delete(User user)
   {
-    users.Remove(user);
+    lock (lockObj)
+    {
+      users.Remove(user);
+    }
     await Save();
   }
 
   public Task<IEnumerable<User>> List(Guid? id, string? username, bool? isAdmin)
   {
-    var result = users
-      .AsParallel()
-      .Where(user => id == null || user.ID == id)
-      .Where(user => username == null || user.Username == username)
-      .Where(user => isAdmin == null || user.IsAdmin == isAdmin)
-      .ToList();
+    List<User> result;
+    lock (lockObj)
+    {
+      result = users
+        .AsParallel()
+        .Where(user => id == null || user.ID == id)
+        .Where(user => username == null || user.Username == username)
+        .Where(user => isAdmin == null || user.IsAdmin == isAdmin)
+        .ToList();
+    }
 
     return Task.FromResult<IEnumerable<User>>(result);
   }
 
   public async Task Update(User user)
   {
-    int index = users.FindIndex(u => user.ID == u.ID);
-    if (index != -1)
+    int index = -1;
+    lock (lockObj)
     {
-      users[index] = user;
-      await Save();
+      index = users.FindIndex(u => user.ID == u.ID);
+      if (index != -1)
+      {
+        users[index] = user;
+      }
     }
+
+    if (index != -1) await Save();
   }
 }

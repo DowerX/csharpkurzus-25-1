@@ -10,6 +10,7 @@ public class AppearanceJsonDAO : IAppearanceDAO, IAsyncDisposable
 {
   private readonly List<Appearance> appearances;
   private readonly string path;
+  private readonly Lock lockObj = new();
 
   public AppearanceJsonDAO(string path)
   {
@@ -33,11 +34,15 @@ public class AppearanceJsonDAO : IAppearanceDAO, IAsyncDisposable
     string tempFile = Path.GetTempFileName();
     try
     {
-      var dtoList = appearances
+      List<AppearanceJsonDTO> dtoList;
+
+      lock (lockObj)
+      {
+        dtoList = appearances
         .AsParallel()
         .Select(review => review.ToDTO())
         .ToList();
-
+      }
       await using FileStream stream = File.Create(tempFile);
       await JsonSerializer.SerializeAsync(stream, dtoList, Config.JsonOptions);
       stream.Close();
@@ -57,36 +62,51 @@ public class AppearanceJsonDAO : IAppearanceDAO, IAsyncDisposable
 
   public async Task Create(Appearance appearance)
   {
-    appearances.Add(appearance);
+    lock (lockObj)
+    {
+      appearances.Add(appearance);
+    }
     await Save();
   }
 
   public async Task Delete(Appearance appearance)
   {
-    appearances.Remove(appearance);
+    lock (lockObj)
+    {
+      appearances.Remove(appearance);
+    }
     await Save();
   }
 
   public Task<IEnumerable<Appearance>> List(Guid? id, Guid? movie, Guid? person, Role? role)
   {
-    var result = appearances
-      .AsParallel()
-      .Where(appearance => id == null || appearance.ID == id)
-      .Where(appearance => movie == null || appearance.MovieID == movie)
-      .Where(appearance => person == null || appearance.PersonID == person)
-      .Where(appearance => role == null || appearance.Role == role)
-      .ToList();
+    List<Appearance> result;
+    lock (lockObj)
+    {
+      result = appearances
+          .AsParallel()
+          .Where(appearance => id == null || appearance.ID == id)
+          .Where(appearance => movie == null || appearance.MovieID == movie)
+          .Where(appearance => person == null || appearance.PersonID == person)
+          .Where(appearance => role == null || appearance.Role == role)
+          .ToList();
+    }
 
     return Task.FromResult<IEnumerable<Appearance>>(result);
   }
 
   public async Task Update(Appearance appearance)
   {
-    int index = appearances.FindIndex(a => appearance.ID == a.ID);
-    if (index != -1)
+    int index = -1;
+    lock (lockObj)
     {
-      appearances[index] = appearance;
-      await Save();
+      index = appearances.FindIndex(a => appearance.ID == a.ID);
+      if (index != -1)
+      {
+        appearances[index] = appearance;
+      }
     }
+
+    if (index != -1) await Save();
   }
 }
