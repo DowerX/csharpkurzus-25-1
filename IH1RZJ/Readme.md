@@ -34,12 +34,18 @@
 
 ## Konfiguráció
 
-A rednszer minden adatot Json fileokban tárol, ezeket alpból a futtatott program mellet keresi, de konfigurálható környezeti változókkal vagy parancssori paraméterekkel. Pl. a felhasználókat tároló file `MOVIE_USERSPATH=/valami/users.json` környezetiváltozóval vagy `--userspath=/valami/users.json` argumentummal.
+A rendszer minden adatot Json fileokban tárol, ezeket alpból a futtatott program mellet keresi, de konfigurálható környezeti változókkal vagy parancssori paraméterekkel. Pl. a felhasználókat tároló file `MOVIE_USERSPATH=/valami/users.json` környezetiváltozóval vagy `--userspath=/valami/users.json` argumentummal.
 
 - UsersPath: felhasnálók
 - PeoplePath: filmen dolgozó embeker
 - MoviesPath: filmek
 - AppearancesPath: emerek és filmek kapcsolótáblája
+
+A `--help` argumentummal elérhető a kapcsolók listája. \
+A `--demomode true` kapcsolóval új adatbázis fájlok jönnek létre demo adatokkal. Kettő felhasználót hoz létre:
+
+- admin: admin
+- user1: user1
 
 ## Felület
 
