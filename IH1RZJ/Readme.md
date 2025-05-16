@@ -57,3 +57,7 @@ Nyilakkal, tab-bal vagy egérrel lehet lépkedni a menükben. Enter vagy kattint
 - LINQ: [MovieController.cs:39](controller/MovieController.cs)
 - generikus kollekció: [MovieController.cs:65](controller/MovieController.cs)
 - aszinkron rész: [MovieController.cs:62](controller/MovieController.cs)
+
+## TODO
+
+- Szereplések kezelése

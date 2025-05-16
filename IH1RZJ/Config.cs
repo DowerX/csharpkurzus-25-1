@@ -26,6 +26,8 @@ public class Config
   public string ReviewsPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "reviews.json");
   public string AppearancesPath { get; set; } = Path.Combine(AppContext.BaseDirectory, "appearances.json");
 
+  public bool DemoMode { get; set; } = false;
+
   public static JsonSerializerOptions JsonOptions = new()
   {
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
