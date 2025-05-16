@@ -15,11 +15,26 @@ internal class Program
     // load config
     try
     {
-      new ConfigurationBuilder()
+      var config = new ConfigurationBuilder()
         .AddEnvironmentVariables(prefix: "MOVIE_")
         .AddCommandLine(args)
-        .Build()
-        .Bind(Config.Instance);
+        .Build();
+
+      if (args.Contains("--help") || args.Contains("-h"))
+      {
+        Console.WriteLine("Usage: IH1RZJ [options]");
+        Console.WriteLine("Options:");
+        Console.WriteLine("  --help, -h              Show this help message");
+        Console.WriteLine("  --DemoMode (true/false) Enable demo mode (erases all data)");
+        Console.WriteLine("  --AppearancesPath       Path to appearances file");
+        Console.WriteLine("  --MoviesPath            Path to movies file");
+        Console.WriteLine("  --PeoplePath            Path to people file");
+        Console.WriteLine("  --ReviewsPath           Path to reviews file");
+        Console.WriteLine("  --UsersPath             Path to users file");
+        return;
+      }
+
+      config.Bind(Config.Instance);
     }
     catch (Exception e)
     {
